@@ -1,1 +1,1556 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MEYDEN OS — Core Fusion MYD intégré</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body{background:radial-gradient(circle at 15% 5%,rgba(255,90,0,.24),transparent 30%),radial-gradient(circle at 85% 8%,rgba(0,191,255,.16),transparent 28%),linear-gradient(180deg,#050505 0%,#101014 48%,#000 100%)}
+    .glass{background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.10);backdrop-filter:blur(14px)}
+    .orange-glow{box-shadow:0 0 55px rgba(255,90,0,.16)}
+    .cyan-glow{box-shadow:0 0 55px rgba(0,191,255,.12)}
+    video,iframe,img{width:100%;height:100%;background:#000;border:0;object-fit:contain}
+    .modal{display:none}.modal.open{display:flex}.panel{display:none}.panel.open{display:block}
+    .maf-shirt-part{border:1px solid rgba(255,255,255,.10)}
+    .maf-panel{background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.10);backdrop-filter:blur(14px)}
+    .maf-btn{border-radius:1rem;padding:.75rem 1rem;font-weight:900;background:rgba(255,255,255,.10)}
+    .maf-btn.active,.maf-btn.orange{background:#f97316;color:#000}
 
+    /* ===== MEYDEN OS CORE FUSION — MYD WALLET ===== */
+    .myd-card{background:linear-gradient(180deg,rgba(255,255,255,.075),rgba(255,255,255,.035));border:1px solid rgba(255,255,255,.12);border-radius:28px;padding:1.25rem;backdrop-filter:blur(14px)}
+    .myd-btn{border-radius:1rem;padding:.8rem 1rem;font-weight:900;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.12)}
+    .myd-btn.orange{background:#f97316;color:#000}.myd-btn.green{background:#22c55e;color:#001b0a}.myd-btn.cyan{background:#67e8f9;color:#00141c}
+    .myd-input{width:100%;border-radius:1rem;background:rgba(0,0,0,.42);border:1px solid rgba(255,255,255,.14);padding:.8rem 1rem;color:#fff}
+    .myd-log{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.78rem}
+    .myd-pill{display:inline-flex;border-radius:999px;padding:.4rem .75rem;font-size:.75rem;font-weight:900;border:1px solid rgba(249,115,22,.35);background:rgba(249,115,22,.12);color:#fdba74}
+
+  </style>
+</head>
+<body class="min-h-screen text-white selection:bg-orange-500 selection:text-black">
+<header class="sticky top-0 z-50 border-b border-white/10 bg-black/75 backdrop-blur-xl">
+  <div class="mx-auto max-w-7xl px-4 py-4 flex flex-wrap items-center justify-between gap-4">
+    <div>
+      <div class="text-3xl font-black tracking-[.28em] text-orange-400">MEYDEN</div>
+      <div class="text-xs uppercase tracking-[.32em] text-white/45">Mouvement Artistique du Québec • OS Fusion</div>
+    </div>
+    <nav class="flex flex-wrap gap-2 text-sm font-bold">
+      <button data-scroll="media" class="rounded-2xl bg-orange-500 px-4 py-3 text-black">Média</button>
+      <button data-scroll="meyden-monitor-page" class="rounded-2xl bg-white/10 px-4 py-3">Meyden Monitor</button>
+      <button data-scroll="myd-core-fusion" class="rounded-2xl bg-yellow-300 px-4 py-3 text-black">MYD Wallet</button>
+      <button data-scroll="monitor-libraries" class="rounded-2xl bg-white/10 px-4 py-3">Bibliothèques</button>
+      <button data-scroll="adhesion" class="rounded-2xl bg-white/10 px-4 py-3">Adhésion</button>
+      <button data-scroll="dashboard" class="rounded-2xl bg-white/10 px-4 py-3">Dashboard</button>
+      <button data-scroll="scene" class="rounded-2xl bg-white/10 px-4 py-3">Scène</button>
+      <button data-scroll="studio-lujamko" class="rounded-2xl bg-white/10 px-4 py-3">Studio</button>
+      <button data-scroll="meyden-art-fact" class="rounded-2xl bg-orange-500 px-4 py-3 text-black">Meyden Art & Fact</button>
+      <button data-modal="creatorJoinModal" class="rounded-2xl bg-orange-500 px-4 py-3 text-black">Créateur</button>
+      <button data-modal="publicJoinModal" class="rounded-2xl bg-cyan-300 px-4 py-3 text-black">Public</button>
+      <button data-modal="sceneBookModal" class="rounded-2xl bg-[#0f52ba] px-4 py-3">Réserver</button>
+    </nav>
+  </div>
+</header>
+
+<main class="mx-auto max-w-7xl px-4 py-6 space-y-6">
+  <section class="grid gap-6 lg:grid-cols-[1.05fr_.95fr]">
+    <div class="glass orange-glow rounded-[32px] p-6 lg:p-8">
+      <div class="inline-flex rounded-full border border-orange-400/30 bg-orange-500/10 px-4 py-2 text-xs font-black uppercase tracking-[.22em] text-orange-300">Meyden Monitor + Média</div>
+      <h1 class="mt-5 text-5xl lg:text-7xl font-black leading-[.92]">MEYDEN OS</h1>
+      <p class="mt-5 text-lg leading-8 text-white/70 max-w-2xl">Une plateforme fusionnée : diffusion média, bibliothèques de monitors, coins, dashboard créateur, scène, sponsors, guichet et simulation économique.</p>
+      <div class="mt-7 grid sm:grid-cols-4 gap-4">
+        <div class="glass rounded-3xl p-4"><div class="text-white/45 text-sm">Signal public</div><div id="topTuned" class="text-3xl font-black text-orange-300">1200</div><button id="tunedBtn" class="mt-3 w-full rounded-2xl bg-orange-500 py-3 font-black text-black">Tuned On</button></div>
+        <div class="glass rounded-3xl p-4"><div class="text-white/45 text-sm">MYD Wallet</div><div id="topCoins" class="text-3xl font-black text-yellow-300">148</div><div class="mt-3 text-sm text-white/60">Magasin : <span id="coinValue">148$</span></div></div>
+        <div class="glass rounded-3xl p-4"><div class="text-white/45 text-sm">Performance</div><div id="topScore" class="text-3xl font-black text-green-300">78</div><div class="mt-3 text-sm text-white/60">Lecture comportementale</div></div>
+        <div class="glass rounded-3xl p-4"><div class="text-white/45 text-sm">Monitor actif</div><div id="activeMonitorName" class="text-2xl font-black text-cyan-300">Fans</div><div id="activeMonitorAudience" class="mt-3 text-sm text-white/60">Communauté engagée</div></div>
+      </div>
+    </div>
+
+    <section id="media" class="glass cyan-glow rounded-[32px] overflow-hidden">
+      <div class="p-4 border-b border-white/10 flex flex-wrap gap-3 justify-between items-center">
+        <div><h2 class="text-2xl font-black">Moniteur média central</h2><p id="mediaStatus" class="text-sm text-white/55">Playlist YouTube prête.</p></div>
+        <div class="flex gap-2 flex-wrap"><button data-panel="mediaPanel" class="panelBtn rounded-2xl bg-cyan-300 px-4 py-3 font-black text-black">Choisir un média</button><button data-panel="libraryPanel" class="panelBtn rounded-2xl bg-white/10 px-4 py-3 font-black">Bibliothèque</button></div>
+      </div>
+      <div id="mediaPanel" class="panel p-4 border-b border-white/10">
+        <div class="grid gap-4 lg:grid-cols-2">
+          <div class="glass rounded-3xl p-4"><h3 class="font-black text-orange-300 mb-3">Fichiers locaux</h3><input id="fileInput" type="file" multiple accept="video/mp4,video/webm,video/quicktime,image/png,image/jpeg,image/gif" class="block w-full text-sm text-white/70"><button id="addFilesBtn" class="mt-4 w-full rounded-2xl bg-orange-500 py-3 font-black text-black">Ajouter à la bibliothèque</button><p class="mt-3 text-sm text-white/50">Les fichiers restent disponibles tant que la page reste ouverte.</p></div>
+          <div class="glass rounded-3xl p-4"><h3 class="font-black text-cyan-300 mb-3">YouTube / Playlist</h3><input id="youtubeInput" class="w-full rounded-2xl bg-black border border-cyan-400/30 px-4 py-3" value="https://youtube.com/playlist?list=PL73OuET0k-fsAMRsMlTDQLAkYSEt11cdO&si=D36sXLIPO2dB7DNl"><button id="launchYoutubeBtn" class="mt-4 w-full rounded-2xl bg-[#0f52ba] py-3 font-black">Diffuser via YouTube</button><p class="mt-3 text-sm text-white/50">Historique YouTube conservé dans le navigateur.</p></div>
+        </div>
+      </div>
+      <div id="libraryPanel" class="panel p-4 border-b border-white/10"><div class="flex justify-between gap-3 flex-wrap mb-4"><h3 class="text-xl font-black">Bibliothèque locale</h3><button id="clearYoutubeHistoryBtn" class="rounded-2xl bg-red-500/20 border border-red-400/30 px-4 py-3 font-black text-red-200">Effacer YouTube</button></div><div class="grid gap-5 lg:grid-cols-2"><div><h4 class="text-orange-300 font-black mb-3">Médias téléversés</h4><div id="uploadLibrary" class="grid gap-2"></div></div><div><h4 class="text-cyan-300 font-black mb-3">Historique YouTube</h4><div id="youtubeLibrary" class="grid gap-2"></div></div></div></div>
+      <div id="errorBox" class="hidden m-4 rounded-2xl border border-red-400/30 bg-red-500/10 p-3 text-red-200 text-sm"></div>
+      <div id="monitor" class="aspect-video bg-black flex items-center justify-center"><div class="text-center p-8"><div class="text-5xl font-black text-orange-400">MEYDEN MONITOR</div><p class="mt-3 text-white/50">Chargement YouTube...</p></div></div>
+      <button id="monitorTunedBtn" class="w-full border-t border-orange-500/30 bg-orange-500 py-4 text-xl font-black text-black hover:bg-orange-400 transition">Tuned On — Monitor</button>
+      <div class="p-4 border-t border-white/10"><div class="flex flex-wrap gap-2"><button id="playBtn" class="rounded-2xl bg-orange-500 px-4 py-3 font-black text-black">Play</button><button id="pauseBtn" class="rounded-2xl bg-white/10 px-4 py-3 font-black">Pause</button><button id="reloadBtn" class="rounded-2xl bg-white/10 px-4 py-3 font-black">Recharger</button><button id="prevBtn" class="rounded-2xl bg-white/10 px-4 py-3 font-black">Précédent</button><button id="nextBtn" class="rounded-2xl bg-white/10 px-4 py-3 font-black">Suivant</button><button id="youtubeFallbackBtn" class="rounded-2xl bg-[#0f52ba] px-4 py-3 font-black">YouTube secours</button></div></div>
+    </section>
+  </section>
+
+  <section id="meyden-monitor-page" class="glass rounded-[32px] p-6">
+    <div class="flex flex-wrap justify-between gap-4 mb-6">
+      <div><h2 class="text-4xl font-black">MEYDEN MONITOR</h2><p class="text-white/60 mt-2">Système de circulation, performance et valorisation des contenus Meyden.</p></div>
+      <div class="glass rounded-3xl px-5 py-4"><div class="text-white/40 text-sm">Monitor actif</div><div id="monitorMainLabel" class="text-2xl font-black text-orange-300">Fans</div></div>
+    </div>
+    <div class="grid gap-4 lg:grid-cols-4 mb-6">
+      <div class="glass rounded-3xl p-4"><b>1. Upload</b><p class="text-white/55 mt-2 text-sm">Le contenu entre dans le monitor choisi.</p></div>
+      <div class="glass rounded-3xl p-4"><b>2. Cycle 2h</b><p class="text-white/55 mt-2 text-sm">Chaque bibliothèque tourne en boucle jusqu’à 120 min.</p></div>
+      <div class="glass rounded-3xl p-4"><b>3. Score moyen</b><p class="text-white/55 mt-2 text-sm">Rétention % + Tuned On % = moyenne.</p></div>
+      <div class="glass rounded-3xl p-4"><b>4. Décision 24h</b><p class="text-white/55 mt-2 text-sm">Relance, montée de monitor ou rejet constructif.</p></div>
+    </div>
+    <div class="glass rounded-[30px] p-5 mb-6 border-orange-400/20">
+      <div class="flex flex-wrap justify-between gap-4 items-start"><div><h3 class="text-2xl font-black">Algorithme réel Meyden</h3><p class="text-white/60 mt-2 max-w-3xl">Un contenu commence dans Fans. Chaque cycle de 2h mesure la rétention et les Tuned On. Si la moyenne est assez forte, il est relancé. Après 24h solide dans un niveau, il monte au monitor suivant. Sinon, il est rejeté avec un courriel constructif au créateur.</p></div><button id="realAlgoBtn" class="rounded-2xl bg-orange-500 px-5 py-3 font-black text-black">Simuler un cycle réel</button></div>
+      <div class="grid gap-4 md:grid-cols-5 mt-5"><div class="glass rounded-2xl p-4"><div class="text-white/40 text-sm">Niveau actuel</div><div id="algoLevel" class="text-xl font-black text-cyan-300">Fans</div></div><div class="glass rounded-2xl p-4"><div class="text-white/40 text-sm">Temps regardé</div><div id="algoRetention" class="text-xl font-black text-green-300">0%</div></div><div class="glass rounded-2xl p-4"><div class="text-white/40 text-sm">Tuned On</div><div id="algoTuned" class="text-xl font-black text-orange-300">0%</div></div><div class="glass rounded-2xl p-4"><div class="text-white/40 text-sm">Moyenne</div><div id="algoAverage" class="text-xl font-black text-yellow-300">0%</div></div><div class="glass rounded-2xl p-4"><div class="text-white/40 text-sm">Décision</div><div id="algoDecision" class="text-xl font-black text-orange-300">En attente</div></div></div>
+      <div id="algoEmail" class="hidden mt-5 rounded-2xl border border-red-400/30 bg-red-500/10 p-4 text-sm text-red-100"></div>
+    </div>
+    <h3 class="text-2xl font-black mb-4">Artistes réels intégrés</h3><div id="artistsGrid" class="grid gap-4 lg:grid-cols-3"></div>
+  </section>
+
+  <section id="monitor-section" class="glass rounded-[32px] p-5"><h2 class="text-2xl font-black">Les 5 Meyden Monitors</h2><p class="text-white/60 text-sm mb-4">Chaque monitor représente un niveau de circulation.</p><div id="monitorGrid" class="grid gap-4 md:grid-cols-2 xl:grid-cols-5"></div></section>
+
+  <section id="monitor-libraries" class="glass rounded-[32px] p-6">
+    <div class="flex flex-wrap justify-between gap-4 mb-6">
+      <div><h2 class="text-4xl font-black text-orange-300">Bibliothèques Meyden Monitor</h2><p class="text-white/60 mt-2 max-w-3xl">Chaque contenu est ajouté à la bibliothèque du monitor sélectionné. Chaque bibliothèque compile jusqu’à 120 minutes. Les 5 monitors tournent en boucle de 120 minutes et convergent ensemble.</p></div>
+      <div class="glass rounded-3xl p-5 min-w-52"><div class="text-white/40 text-sm">Capacité par bibliothèque</div><div class="text-5xl font-black text-orange-300">120<span class="text-xl"> min</span></div></div>
+    </div>
+    <div class="glass rounded-[28px] p-5 mb-6 border-orange-500/20">
+      <div class="flex flex-wrap justify-between gap-4 items-start">
+        <div>
+          <h3 class="text-3xl font-black text-orange-300">Moteur de circulation des 5 monitors</h3>
+          <p class="text-white/60 mt-2 max-w-4xl">Chaque contenu traverse des cycles de 2h. Après 12 cycles solides, soit 24h, il peut monter au monitor suivant. S’il échoue, il retourne au créateur avec une recommandation constructive.</p>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <button id="run2hCycleBtn" class="rounded-2xl bg-orange-500 px-5 py-3 font-black text-black">Simuler 2h</button>
+          <button id="run24hCycleBtn" class="rounded-2xl bg-white/10 px-5 py-3 font-black">Simuler 24h</button>
+          <button id="resetCirculationBtn" class="rounded-2xl bg-red-500/20 border border-red-400/30 px-5 py-3 font-black text-red-200">Reset</button>
+        </div>
+      </div>
+      <div class="grid gap-3 md:grid-cols-5 mt-5">
+        <div class="glass rounded-2xl p-4"><div class="text-white/40 text-sm">Cycles 2h simulés</div><div id="engineCycles" class="text-2xl font-black text-orange-300">0</div></div>
+        <div class="glass rounded-2xl p-4"><div class="text-white/40 text-sm">Promotions</div><div id="enginePromotions" class="text-2xl font-black text-green-300">0</div></div>
+        <div class="glass rounded-2xl p-4"><div class="text-white/40 text-sm">Rejets</div><div id="engineRejects" class="text-2xl font-black text-red-300">0</div></div>
+        <div class="glass rounded-2xl p-4"><div class="text-white/40 text-sm">Score minimum</div><div class="text-2xl font-black text-yellow-300">70%</div></div>
+        <div class="glass rounded-2xl p-4"><div class="text-white/40 text-sm">Temps pour monter</div><div class="text-2xl font-black text-cyan-300">24h</div></div>
+      </div>
+      <div id="engineLog" class="mt-5 rounded-2xl bg-black/30 border border-white/10 p-4 text-sm text-white/70 max-h-48 overflow-auto">Moteur prêt. Ajoute du contenu ou simule un cycle.</div>
+    </div>
+
+    <div class="glass rounded-[28px] p-5 mb-6 border-cyan-400/20">
+      <h3 class="text-3xl font-black text-cyan-300">5 moniteurs centraux synchronisés</h3>
+      <p class="text-white/60 mt-2 mb-5 max-w-4xl">Chaque monitor ci-dessous agit comme un vrai moniteur central : boucle 120 min, contenus actifs, rétention, Tuned On, moyenne et décision. Ils ne sont pas séparés : le bouton Simuler 2h fait évoluer toute la chaîne en même temps.</p>
+      <div id="fiveCentralMonitors" class="grid gap-4 md:grid-cols-2 xl:grid-cols-5"></div>
+    </div>
+
+    <div class="grid gap-4 lg:grid-cols-[.8fr_1.2fr] mb-6">
+      <div class="glass rounded-[28px] p-5">
+        <h3 class="text-2xl font-black mb-4">Téléverser vers un monitor</h3>
+        <label class="block text-white/50 text-sm mb-2">Monitor d’entrée obligatoire</label>
+        <div class="w-full rounded-2xl bg-black/40 border border-orange-500/30 px-4 py-3 mb-3 font-black text-orange-300">Fans — entrée obligatoire du système</div>
+        <input id="uploadMonitorSelect" type="hidden" value="Fans">
+        <label class="block text-white/50 text-sm mb-2">Titre du contenu</label>
+        <input id="monitorUploadTitle" class="w-full rounded-2xl bg-black/40 border border-white/10 px-4 py-3 mb-3" placeholder="Ex: clip officiel, live session, reel...">
+        <label class="block text-white/50 text-sm mb-2">Durée en minutes</label>
+
+      <div class="mt-4 mb-4">
+        <label class="block text-white/50 text-sm mb-2">Fichier vidéo</label>
+        <input id="creatorVideoFile" type="file" accept="video/mp4,video/webm,video/quicktime" class="w-full rounded-2xl bg-black/40 border border-white/10 px-4 py-3 text-white">
+      </div>
+        <input id="monitorUploadDuration" type="number" min="1" max="120" value="4" class="w-full rounded-2xl bg-black/40 border border-white/10 px-4 py-3 mb-4">
+        <button id="addToMonitorLibraryBtn" class="w-full rounded-2xl bg-orange-500 py-4 font-black text-black">Ajouter à la bibliothèque du monitor</button>
+        <p class="text-white/45 text-sm mt-3">Démo : tu peux simuler l’ajout même sans fichier vidéo réel.</p>
+      </div>
+      <div class="glass rounded-[28px] p-5">
+        <h3 class="text-2xl font-black mb-4">Convergence & symbiose</h3>
+        <div class="grid grid-cols-3 gap-3 items-center text-center">
+          <div class="rounded-full border border-cyan-300/40 bg-cyan-300/10 p-5 font-black text-cyan-300">Fans</div><div class="text-4xl">→</div><div class="rounded-full border border-green-300/40 bg-green-300/10 p-5 font-black text-green-300">Public Ciblé</div><div class="text-4xl">↘</div><div class="rounded-full border border-orange-300/50 bg-orange-500/10 p-8 font-black text-orange-300">SYMBIOSE<br>MEYDEN</div><div class="text-4xl">↗</div><div class="rounded-full border border-orange-500/50 bg-orange-500/10 p-5 font-black text-orange-300">Grand Public</div><div class="text-4xl">←</div><div class="rounded-full border border-yellow-300/50 bg-yellow-300/10 p-5 font-black text-yellow-300">International</div>
+        </div>
+        <div class="grid md:grid-cols-4 gap-3 mt-6"><div class="glass rounded-2xl p-4"><div class="text-white/40 text-sm">Capacité totale</div><div id="totalLibraryCapacity" class="text-2xl font-black text-orange-300">0 / 600 min</div></div><div class="glass rounded-2xl p-4"><div class="text-white/40 text-sm">Contenus actifs</div><div id="activeContentCount" class="text-2xl font-black text-cyan-300">0</div></div><div class="glass rounded-2xl p-4"><div class="text-white/40 text-sm">Boucle</div><div class="text-2xl font-black text-green-300">120 min</div></div><div class="glass rounded-2xl p-4"><div class="text-white/40 text-sm">Système</div><div id="symbiosisStatus" class="text-2xl font-black text-green-300">EN SYMBIOSE</div></div></div>
+      </div>
+    </div>
+    <div id="monitorLibrariesGrid" class="grid gap-4 md:grid-cols-2 xl:grid-cols-5"></div>
+  </section>
+
+  <section class="grid gap-6 xl:grid-cols-[1fr_.9fr]">
+    <div class="glass rounded-[32px] p-5"><h2 class="text-2xl font-black">Flow d’évolution du contenu</h2><p class="text-white/60 text-sm mb-4">Cycle automatique en boucle.</p><div class="flex flex-wrap gap-2 mb-4"><button id="flowPlayBtn" class="rounded-2xl bg-orange-500 px-4 py-3 font-black text-black">Cycle automatique ON</button><button id="flowStepBtn" class="rounded-2xl bg-white/10 px-4 py-3 font-black">Avancer 1 étape</button><button id="flowResetBtn" class="rounded-2xl bg-white/10 px-4 py-3 font-black">Réinitialiser</button></div><div class="rounded-3xl border border-white/10 bg-black/30 p-3 mb-4"><div class="flex items-center justify-between text-xs text-white/50 mb-2"><span>Cycle Meyden Monitor</span><span id="flowPercent">0%</span></div><div class="h-3 rounded-full bg-white/10 overflow-hidden"><div id="flowProgress" class="h-full w-0 rounded-full bg-orange-500 transition-all duration-700"></div></div></div><div id="flowGrid" class="grid grid-cols-2 md:grid-cols-4 gap-3"></div><div id="flowText" class="mt-4 rounded-2xl border border-white/10 bg-black/30 p-4 text-sm leading-7 text-white/75"></div><div id="emailBox" class="hidden mt-4 rounded-2xl border border-orange-500 bg-orange-500/10 p-4"><div class="font-bold">Courriel de recommandation</div><div class="mt-2 text-sm text-white/80">Ton contenu manque d’impact dans les premières secondes. Coupe l’intro, renforce le hook et clarifie immédiatement l’audience.</div></div></div>
+    <div class="glass rounded-[32px] p-5"><h2 class="text-2xl font-black mb-4">Lien stratégique</h2><div class="grid grid-cols-2 gap-3 text-sm"><div class="glass rounded-2xl p-4">Audience<div id="linkAudience" class="mt-2 text-xl font-black text-cyan-300">Fans</div></div><div class="glass rounded-2xl p-4">Performance<div id="linkPerformance" class="mt-2 text-xl font-black text-green-300">78</div></div><div class="glass rounded-2xl p-4">Coins<div id="linkCoins" class="mt-2 text-xl font-black text-yellow-300">148</div></div><div class="glass rounded-2xl p-4">Amélioration<div id="linkImprovement" class="mt-2 text-xl font-black text-orange-300">Version 1</div></div></div><div class="mt-4 rounded-2xl border border-orange-500/30 bg-orange-500/10 p-4 text-sm leading-7 text-white/75">Le système récompense la clarté, la rétention et la pertinence.</div></div>
+  </section>
+
+  <section id="adhesion" class="glass rounded-[32px] p-6"><h2 class="text-4xl font-black">Adhésion Meyden</h2><p class="text-white/60 mt-2 mb-6">Deux entrées claires : créateurs et public auditeur.</p><div class="grid gap-5 lg:grid-cols-2"><div class="glass rounded-[30px] p-5"><h3 class="text-2xl font-black text-orange-300">Créateur / Artiste</h3><p class="text-white/60 mt-2">Déposer du contenu, suivre ses coins, recevoir des recommandations.</p><button data-modal="creatorJoinModal" class="mt-5 w-full rounded-2xl bg-orange-500 py-4 font-black text-black">Remplir le formulaire créateur</button></div><div class="glass rounded-[30px] p-5"><h3 class="text-2xl font-black text-cyan-300">Public auditeur</h3><p class="text-white/60 mt-2">Écouter, suivre les artistes et participer au signal culturel.</p><button data-modal="publicJoinModal" class="mt-5 w-full rounded-2xl bg-cyan-300 py-4 font-black text-black">Remplir le formulaire public</button></div></div></section>
+
+
+
+  <section id="myd-core-fusion" class="glass rounded-[32px] p-6 border border-yellow-300/20 orange-glow">
+    <div class="flex flex-wrap justify-between gap-4 items-start mb-6">
+      <div>
+        <div class="myd-pill">MEYDEN OS CORE FUSION</div>
+        <h2 class="mt-4 text-4xl lg:text-5xl font-black">MYD Wallet central</h2>
+        <p class="text-white/60 mt-2 max-w-4xl">Le moteur MYD connecte abonnement, téléversement, Tuned On, Meyden Monitor, marketplace, billetterie, incubateur, livestream et guichet. Les MYD achetés peuvent être retirés selon la règle 4 MYD = 1$ CAD; les MYD bonus restent dans l’écosystème.</p>
+      </div>
+      <div class="myd-card min-w-[250px]">
+        <div class="text-white/45 text-sm">Statut wallet</div>
+        <div id="mydWalletStatus" class="text-2xl font-black text-green-300 mt-1">Actif — abonnement requis</div>
+        <div class="text-white/45 text-sm mt-2">Mode : plateforme fermée</div>
+      </div>
+    </div>
+
+    <div class="grid gap-4 md:grid-cols-4 mb-5">
+      <div class="myd-card"><div class="text-white/45 text-sm">MYD achetés</div><div id="mydPurchased" class="text-4xl font-black text-yellow-300 mt-2">148</div><div class="text-xs text-white/45 mt-2">Retirable selon règle guichet</div></div>
+      <div class="myd-card"><div class="text-white/45 text-sm">MYD bonus</div><div id="mydBonus" class="text-4xl font-black text-orange-300 mt-2">0</div><div class="text-xs text-white/45 mt-2">Non retirable, utilisable dans Meyden</div></div>
+      <div class="myd-card"><div class="text-white/45 text-sm">Valeur magasin</div><div id="mydStoreValue" class="text-4xl font-black text-green-300 mt-2">148$</div><div class="text-xs text-white/45 mt-2">1 MYD = 1$ en services/achats</div></div>
+      <div class="myd-card"><div class="text-white/45 text-sm">Valeur retrait</div><div id="mydWithdrawValue" class="text-4xl font-black text-cyan-300 mt-2">37$</div><div class="text-xs text-white/45 mt-2">4 MYD achetés = 1$ CAD</div></div>
+    </div>
+
+    <div class="grid gap-4 lg:grid-cols-[.75fr_1.25fr]">
+      <div class="space-y-4">
+        <div class="myd-card">
+          <h3 class="text-2xl font-black mb-3">Actions wallet</h3>
+          <label class="block text-white/45 text-sm mb-2">Acheter des MYD</label>
+          <div class="grid grid-cols-[1fr_auto] gap-2 mb-4"><input id="mydBuyAmount" class="myd-input" type="number" value="25"><button id="mydBuyBtn" class="myd-btn orange">Acheter</button></div>
+          <label class="block text-white/45 text-sm mb-2">Demande de retrait</label>
+          <div class="grid grid-cols-[1fr_auto] gap-2"><input id="mydWithdrawAmount" class="myd-input" type="number" value="40"><button id="mydWithdrawBtn" class="myd-btn cyan">Retirer</button></div>
+          <div class="mt-4 grid gap-2 text-sm text-white/60">
+            <div class="rounded-2xl bg-black/30 border border-white/10 p-3"><b class="text-yellow-300">Entrée :</b> 1$ CAD = 1 MYD</div>
+            <div class="rounded-2xl bg-black/30 border border-white/10 p-3"><b class="text-green-300">Magasin :</b> 1 MYD = 1$ de valeur</div>
+            <div class="rounded-2xl bg-black/30 border border-white/10 p-3"><b class="text-cyan-300">Retrait :</b> 4 MYD achetés = 1$ CAD</div>
+          </div>
+        </div>
+        <div class="myd-card">
+          <h3 class="text-2xl font-black mb-3">Test rapide connecté</h3>
+          <div class="grid grid-cols-2 gap-2">
+            <button id="mydTestUploadBtn" class="myd-btn">Upload + reward</button>
+            <button id="mydTestTunedBtn" class="myd-btn">Tuned On + bonus</button>
+            <button id="mydTestTicketBtn" class="myd-btn orange">Billet 22 MYD</button>
+            <button id="mydTestLiveBtn" class="myd-btn green">Live + bonus</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="myd-card">
+        <div class="flex flex-wrap justify-between gap-3 items-center mb-4">
+          <div><h3 class="text-2xl font-black">Flux d’activité économique</h3><p class="text-white/50 text-sm">Chaque action importante de la plateforme écrit ici.</p></div>
+          <button id="mydAuditBtn" class="myd-btn">Audit anti-abus</button>
+        </div>
+        <div id="mydActivityLog" class="myd-log grid gap-2 max-h-[360px] overflow-auto"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="dashboard" class="space-y-6">
+  <div class="glass rounded-[32px] p-6 border border-orange-500/20">
+    <div class="flex flex-wrap items-center justify-between gap-4">
+      <div>
+        <div class="text-xs uppercase tracking-[.25em] text-orange-300">Interface créateur</div>
+        <h2 class="text-4xl font-black mt-2">Dashboard Meyden Créateur</h2>
+        <p class="text-white/60 mt-2 max-w-3xl">Téléversement, statistiques, tuned on, coins, recommandations constructives et évolution dans les 5 Meyden Monitors.</p>
+      </div>
+      <button class="rounded-2xl bg-orange-500 px-6 py-4 font-black text-black">Téléverser une vidéo</button>
+    </div>
+  </div>
+
+  <div class="grid gap-6 xl:grid-cols-[0.85fr_1.15fr]">
+    <div class="glass rounded-[32px] p-5">
+      <div class="flex items-center gap-4 mb-5">
+        <div class="w-20 h-20 rounded-3xl bg-orange-500/20 border border-orange-500/30 flex items-center justify-center text-3xl font-black text-orange-300">MP</div>
+        <div>
+          <div class="text-2xl font-black">Mon profil</div>
+          <div class="text-white/50">Créateur Meyden actif</div>
+          <div class="mt-2 inline-flex rounded-full bg-green-500/20 border border-green-400/30 px-3 py-1 text-xs font-black text-green-300">En circulation</div>
+        </div>
+      </div>
+
+      <div class="space-y-3 text-sm">
+        <div class="glass rounded-2xl p-4 flex items-center justify-between">
+          <div>
+            <div class="text-white/45">Niveau Gratuit</div>
+            <div class="text-xs text-white/40 mt-1">Accès limité</div>
+          </div>
+          <input type="checkbox" class="scale-125 accent-orange-500">
+        </div>
+
+        <div class="glass rounded-2xl p-4 border border-orange-500/30 flex items-center justify-between">
+          <div>
+            <div class="text-orange-300 font-black">Créateur 14.99$</div>
+            <div class="text-xs text-white/40 mt-1">4 vidéos par mois</div>
+          </div>
+          <input checked type="checkbox" class="scale-125 accent-orange-500">
+        </div>
+
+        <div class="glass rounded-2xl p-4 flex items-center justify-between">
+          <div>
+            <div class="text-cyan-300 font-black">Créateur 65.99$</div>
+            <div class="text-xs text-white/40 mt-1">Téléversement quotidien</div>
+          </div>
+          <input type="checkbox" class="scale-125 accent-cyan-400">
+        </div>
+      </div>
+
+      <div class="mt-6 rounded-3xl border border-dashed border-orange-500/30 bg-black/30 p-5 text-center">
+        <div class="text-lg font-black">Téléverser une vidéo</div>
+        <div class="text-sm text-white/45 mt-2">MP4 • MOV • WEBM</div>
+        <input id="creatorUploadInput" type="file" accept="video/*" class="mt-4 block w-full text-sm text-white/70">
+        <button id="creatorUploadBtn" class="mt-4 w-full rounded-2xl bg-orange-500 py-4 font-black text-black">Ajouter au système Meyden</button>
+      </div>
+    </div>
+
+    <div class="space-y-6">
+      <div class="grid md:grid-cols-2 gap-5">
+        <div class="glass rounded-[28px] p-5">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <div class="text-white/45 text-sm">Mes statistiques</div>
+              <div class="text-3xl font-black text-green-300 mt-1">78%</div>
+            </div>
+            <div class="w-20 h-20 rounded-2xl bg-green-500/10 border border-green-400/20 flex items-center justify-center">
+              📈
+            </div>
+          </div>
+          <div class="h-32 rounded-2xl bg-black/30 border border-white/10 p-3 flex items-end gap-2">
+            <div class="w-full bg-orange-500 rounded-t-xl h-[35%]"></div>
+            <div class="w-full bg-orange-500 rounded-t-xl h-[70%]"></div>
+            <div class="w-full bg-orange-500 rounded-t-xl h-[48%]"></div>
+            <div class="w-full bg-orange-500 rounded-t-xl h-[85%]"></div>
+            <div class="w-full bg-orange-500 rounded-t-xl h-[62%]"></div>
+            <div class="w-full bg-orange-500 rounded-t-xl h-[95%]"></div>
+          </div>
+        </div>
+
+        <div class="glass rounded-[28px] p-5">
+          <div class="text-white/45 text-sm">Mes Coins</div>
+          <div class="text-5xl font-black text-yellow-300 mt-2">148</div>
+          <div class="mt-4 text-sm text-white/55">Valeur estimée : 22.20$</div>
+          <div class="mt-5 h-3 rounded-full bg-white/10 overflow-hidden">
+            <div class="h-full bg-yellow-300 w-[72%]"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-5">
+        <div class="glass rounded-[28px] p-5 text-center">
+          <div class="text-white/45 text-sm">Mes vidéos téléversées</div>
+          <div class="text-5xl font-black text-cyan-300 mt-3">12</div>
+          <div class="text-xs text-white/45 mt-2">Contenus actifs</div>
+        </div>
+
+        <div class="glass rounded-[28px] p-5 text-center border border-orange-500/20">
+          <div class="text-white/45 text-sm">Mes vidéos Tuned On</div>
+          <div class="text-5xl font-black text-orange-300 mt-3">84%</div>
+          <div class="text-xs text-white/45 mt-2">Engagement public</div>
+        </div>
+
+        <div class="glass rounded-[28px] p-5 text-center">
+          <div class="text-white/45 text-sm">Monitor actif</div>
+          <div class="text-4xl font-black text-green-300 mt-3">Fans</div>
+          <div class="text-xs text-white/45 mt-2">Cycle 2h actif</div>
+        </div>
+      </div>
+
+      <div class="glass rounded-[32px] p-6 border border-orange-500/20">
+        <div class="flex items-center justify-between gap-3 mb-4">
+          <div>
+            <div class="text-2xl font-black">Mes conseils constructifs</div>
+            <div class="text-sm text-white/50 mt-1">Courriels générés automatiquement par le système Meyden</div>
+          </div>
+          <div class="rounded-full bg-orange-500/20 border border-orange-500/30 px-4 py-2 text-xs font-black text-orange-300">Analyse active</div>
+        </div>
+
+        <div class="space-y-3 text-sm leading-7">
+          <div class="rounded-2xl border border-orange-500/20 bg-orange-500/10 p-4">
+            <b class="text-orange-300">Conseil #1</b><br>
+            Les 5 premières secondes doivent créer un impact immédiat. Le taux de rétention descend après 7 secondes.
+          </div>
+
+          <div class="rounded-2xl border border-cyan-500/20 bg-cyan-500/10 p-4">
+            <b class="text-cyan-300">Conseil #2</b><br>
+            Les vidéos avec visage humain et mouvement rapide obtiennent plus de Tuned On dans Fans et Public Ciblé.
+          </div>
+
+          <div class="rounded-2xl border border-green-500/20 bg-green-500/10 p-4">
+            <b class="text-green-300">Conseil #3</b><br>
+            Ton contenu approche une promotion vers Petit Public. Maintiens une moyenne supérieure à 70% pendant 24h.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+  <section class="glass rounded-[32px] p-5"><div class="flex flex-wrap justify-between gap-3 mb-4"><div><h2 class="text-2xl font-black">Projection 24 mois</h2><p class="text-white/60 text-sm">Scénarios investisseur.</p></div><div class="flex flex-wrap gap-2"><button data-scenario="conservative" class="scenarioBtn rounded-2xl bg-white/10 px-4 py-3 font-black">Conservateur</button><button data-scenario="realistic" class="scenarioBtn rounded-2xl bg-orange-500 px-4 py-3 font-black text-black">Réaliste</button><button data-scenario="ambitious" class="scenarioBtn rounded-2xl bg-white/10 px-4 py-3 font-black">Ambitieux</button></div></div><div class="rounded-3xl bg-black/40 border border-white/10 p-4"><canvas id="growthChart" height="100"></canvas></div><div class="grid md:grid-cols-4 gap-3 mt-4"><div class="glass rounded-2xl p-4">Scénario<div id="activeScenarioLabel" class="text-xl font-black text-orange-300">Réaliste</div></div><div class="glass rounded-2xl p-4">Revenu final<div id="finalRevenue" class="text-xl font-black text-green-300">0$</div></div><div class="glass rounded-2xl p-4">Profit net<div id="finalProfit" class="text-xl font-black text-green-300">0$</div></div><div class="glass rounded-2xl p-4">Abonnés<div id="finalSubs" class="text-xl font-black text-yellow-300">0</div></div></div></section>
+
+  <section class="grid gap-6 xl:grid-cols-3"><div class="glass rounded-[32px] p-5"><h2 class="text-2xl font-black">Simulation financière</h2><p class="text-white/65 mt-2">Cycle local des abonnements.</p><button id="growthTickBtn" class="mt-4 w-full rounded-2xl bg-orange-500 py-3 font-black text-black">Simuler 1 cycle</button></div><div class="glass rounded-[32px] p-5"><div class="text-white/45">Créateurs abonnés</div><div id="simCreatorTotal" class="text-3xl font-black text-orange-300">410</div><div id="simCreatorMix" class="text-sm text-white/60 mt-2">Gratuit 260 • 14.99$ 110 • 65.99$ 40</div></div><div class="glass rounded-[32px] p-5"><div class="text-white/45">Bénéfice net simulé</div><div id="simNetProfit" class="text-3xl font-black text-green-300">0$</div><div class="text-sm text-white/60 mt-2">Après provision, coins et coussin.</div></div></section>
+
+  <section id="scene" class="glass rounded-[32px] p-5"><div class="flex flex-wrap justify-between gap-3 mb-4"><div><h2 class="text-2xl font-black">Scène Meyden ici</h2><p class="text-white/60 text-sm">Booking, public, shows, livestream, billets et captation.</p></div><div class="flex gap-2 flex-wrap"><button data-modal="sceneBookModal" class="rounded-2xl bg-orange-500 px-4 py-3 font-black text-black">Booker un show</button><button data-modal="sceneAttendModal" class="rounded-2xl bg-white/10 px-4 py-3 font-black">Assister à un show</button></div></div><div class="grid gap-4 lg:grid-cols-3"><div class="glass rounded-3xl p-4"><b>Événements</b><p class="text-white/60 mt-2">Shows live, lancements, soirées thématiques.</p></div><div class="glass rounded-3xl p-4"><b>Retombées</b><p class="text-white/60 mt-2">Visibilité, captation, achalandage.</p></div><div class="glass rounded-3xl p-4"><b>Activation</b><p class="text-white/60 mt-2">Booking, sponsors, diffusion numérique.</p></div></div></section>
+
+  <section class="glass rounded-[32px] p-5"><div class="flex flex-wrap justify-between gap-3 mb-4"><div><h2 class="text-2xl font-black">Espace sponsors</h2><p class="text-white/60 text-sm">Présence de marque et activation mesurable.</p></div><button data-modal="sponsorModal" class="rounded-2xl bg-orange-500 px-4 py-3 font-black text-black">Devenir sponsor</button></div><div class="grid gap-4 lg:grid-cols-3"><div class="glass rounded-3xl p-4"><b>Sponsor principal</b><p class="text-white/60 mt-2">Visibilité premium.</p></div><div class="glass rounded-3xl p-4"><b>Partenaire officiel</b><p class="text-white/60 mt-2">Mention campagnes et événements.</p></div><div class="glass rounded-3xl p-4"><b>Sponsor soutien</b><p class="text-white/60 mt-2">Entrée accessible.</p></div></div></section>
+
+  <section class="glass rounded-[32px] p-5"><div class="flex flex-wrap justify-between gap-3 mb-4"><div><h2 class="text-2xl font-black">Guichet MYD</h2><p class="text-white/60 text-sm">Demande d’échange trimestrielle.</p></div><button data-modal="coinsModal" class="rounded-2xl bg-orange-500 px-4 py-3 font-black text-black">Ouvrir le guichet</button></div><div class="grid gap-4 lg:grid-cols-3"><div class="glass rounded-3xl p-4"><b>Statut</b><div id="coinsWindowStatus" class="text-2xl font-black text-green-300">Ouvert</div></div><div class="glass rounded-3xl p-4"><b>Règle</b><div class="text-2xl font-black text-yellow-300">1/3 provision</div></div><div class="glass rounded-3xl p-4"><b>Cycle</b><div id="coinsQuarterLabel" class="text-2xl font-black text-orange-300">T2</div></div></div></section>
+
+  <section id="studio-lujamko" class="glass cyan-glow rounded-[32px] p-5">
+  <style>
+    #studio-lujamko .lj-card{background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.10);backdrop-filter:blur(14px);border-radius:24px}
+    #studio-lujamko .lj-btn{border-radius:16px;padding:12px 16px;font-weight:900;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.10)}
+    #studio-lujamko .lj-btn.active,#studio-lujamko .lj-btn.primary{background:#67e8f9;color:#000}
+    #studio-lujamko .lj-btn.purple{background:#8b5cf6;color:#fff}
+    #studio-lujamko .lj-btn.green{background:#22c55e;color:#001b0a}
+    #studio-lujamko .lj-btn.red{background:rgba(239,68,68,.20);color:#fecaca;border:1px solid rgba(239,68,68,.35)}
+    #studio-lujamko .lj-input{width:100%;border-radius:16px;background:rgba(0,0,0,.42);border:1px solid rgba(103,232,249,.22);padding:12px 14px;color:#fff}
+    #studio-lujamko .lj-view{display:none}
+    #studio-lujamko .lj-view.open{display:block}
+    #studio-lujamko .lj-pill{display:inline-flex;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:900;border:1px solid rgba(103,232,249,.28);background:rgba(103,232,249,.10);color:#67e8f9}
+    #studio-lujamko .lj-item{display:grid;grid-template-columns:42px 1fr auto;gap:10px;align-items:center;border-radius:18px;background:rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.10);padding:10px}
+    #studio-lujamko .lj-ico{width:42px;height:42px;border-radius:14px;background:rgba(103,232,249,.14);display:grid;place-items:center}
+    #studio-lujamko .lj-engine{background:#02040a;border:1px solid rgba(103,232,249,.20);border-radius:24px;overflow:hidden}
+    #studio-lujamko .lj-screen{position:relative;min-height:280px;background:#000}
+    #studio-lujamko .lj-screen video{width:100%;height:280px;object-fit:contain;background:#000;display:none}
+    #studio-lujamko .lj-screen audio{width:calc(100% - 28px);position:absolute;left:14px;bottom:145px;z-index:2}
+    #studio-lujamko .lj-screen.video video{display:block}
+    #studio-lujamko .lj-screen.video .lj-bg,#studio-lujamko .lj-screen.video audio{display:none}
+    #studio-lujamko .lj-bg{position:absolute;inset:0;display:grid;place-items:center;background:radial-gradient(circle,#13213a,#02040a 70%)}
+    #studio-lujamko .lj-disc{width:150px;height:150px;border-radius:50%;background:radial-gradient(circle,#111827 0 18%,#1f2937 19% 35%,#090d16 36% 64%,#67e8f9 65%,#0b1020 66%);box-shadow:0 0 55px rgba(103,232,249,.2)}
+    #studio-lujamko .lj-overlay{position:absolute;left:0;right:0;bottom:0;padding:34px 16px 14px;background:linear-gradient(transparent,rgba(0,0,0,.94))}
+    #studio-lujamko .lj-wave{height:62px;background:rgba(103,232,249,.08);border:1px solid rgba(103,232,249,.18);border-radius:16px;margin:10px 0;display:flex;align-items:end;gap:3px;padding:8px}
+    #studio-lujamko .lj-wave span{flex:1;border-radius:99px;background:linear-gradient(180deg,#67e8f9,#8b5cf6)}
+    #studio-lujamko .lj-progress{height:8px;border-radius:99px;background:rgba(255,255,255,.15);overflow:hidden}
+    #studio-lujamko .lj-bar{height:100%;width:0%;background:linear-gradient(90deg,#67e8f9,#8b5cf6)}
+  </style>
+
+  <div class="flex flex-wrap justify-between gap-4 items-start mb-5">
+    <div>
+      <div class="inline-flex rounded-full border border-cyan-400/30 bg-cyan-400/10 px-4 py-2 text-xs font-black uppercase tracking-[.22em] text-cyan-300">Studio OS intégré</div>
+      <h2 class="mt-4 text-4xl lg:text-6xl font-black leading-[.95]">LUJAMKO<br><span class="text-cyan-300">Studio Interface</span></h2>
+      <p class="mt-4 text-white/65 max-w-3xl leading-7">Interface hybride intégrée dans MEYDEN OS : moteur média MP3/MP4, service & opérations Luc Gauthier, dossiers clients, portail client, permissions et vitrine studio.</p>
+    </div>
+    <div class="lj-card p-4 min-w-[240px]">
+      <div class="text-white/45 text-sm">Connexion active</div>
+      <div id="ljRoleLabel" class="text-2xl font-black text-cyan-300">Luc / Studio 70%</div>
+      <div class="text-white/45 text-sm mt-1">NIP studio : 5055</div>
+    </div>
+  </div>
+
+  <div class="grid gap-3 md:grid-cols-3 mb-5">
+    <button class="lj-btn active" data-lj-role="principal">Admin 100% — 7077</button>
+    <button class="lj-btn" data-lj-role="studio">Luc Studio 70% — 5055</button>
+    <button class="lj-btn" data-lj-role="client">Client invité — 0010</button>
+  </div>
+
+  <div class="flex flex-wrap gap-2 mb-5">
+    <button class="lj-btn primary" data-lj-view="lj-dashboard">Dashboard</button>
+    <button class="lj-btn" data-lj-view="lj-engine">Moteur média</button>
+    <button class="lj-btn" data-lj-view="lj-operations">Service & opérations</button>
+    <button class="lj-btn" data-lj-view="lj-clients">Dossiers clients</button>
+    <button class="lj-btn" data-lj-view="lj-portal">Portail client</button>
+    <button class="lj-btn" data-lj-view="lj-vitrine">Vitrine</button>
+  </div>
+
+  <div id="lj-dashboard" class="lj-view open">
+    <div class="grid gap-5 lg:grid-cols-[1.2fr_.8fr]">
+      <div class="lj-card p-4">
+        <h3 class="text-2xl font-black mb-3">Moteur média rapide</h3>
+        <div id="ljEngineMount"></div>
+      </div>
+      <div class="space-y-4">
+        <div class="lj-card p-4">
+          <h3 class="text-xl font-black mb-3">Service & opérations Luc</h3>
+          <div id="ljOpsMini" class="grid gap-2"></div>
+          <button class="lj-btn primary mt-3 w-full" id="ljAddTaskBtn">Ajouter tâche</button>
+        </div>
+        <div class="lj-card p-4">
+          <h3 class="text-xl font-black mb-3">Dossiers clients</h3>
+          <div id="ljClientMini" class="grid gap-2"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="lj-engine" class="lj-view">
+    <div class="lj-card p-4">
+      <div class="flex flex-wrap justify-between gap-3 mb-4">
+        <h3 class="text-2xl font-black">Moteur média professionnel MP3 / MP4</h3>
+        <label class="lj-btn primary cursor-pointer">Importer média <input id="ljMediaInput" type="file" accept="audio/*,video/*" class="hidden"></label>
+      </div>
+      <div id="ljEngineMountFull"></div>
+      <div class="mt-4">
+        <h4 class="font-black mb-2">Librairie session</h4>
+        <div id="ljLibrary" class="grid gap-2"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="lj-operations" class="lj-view">
+    <div class="lj-card p-4">
+      <div class="flex flex-wrap justify-between gap-3 mb-4"><h3 class="text-2xl font-black">Zone réservée Luc Gauthier — service & opérations</h3><button class="lj-btn primary" id="ljAddTaskBtn2">Ajouter tâche</button></div>
+      <div id="ljOpsList" class="grid gap-2"></div>
+    </div>
+  </div>
+
+  <div id="lj-clients" class="lj-view">
+    <div class="lj-card p-4">
+      <div class="flex flex-wrap justify-between gap-3 mb-4"><h3 class="text-2xl font-black">Dossiers clients</h3><button class="lj-btn primary" id="ljAddClientBtn">Nouveau client</button></div>
+      <div id="ljClientsList" class="grid gap-2"></div>
+    </div>
+  </div>
+
+  <div id="lj-portal" class="lj-view">
+    <div class="lj-card p-4">
+      <h3 class="text-2xl font-black mb-3">Expérience client premium</h3>
+      <p class="text-white/60 mb-4">Le client voit seulement ses versions, ses validations, ses commentaires et ses livrables.</p>
+      <div id="ljPortalList" class="grid gap-2 mb-4"></div>
+      <div class="grid gap-3 md:grid-cols-3">
+        <button class="lj-btn primary" id="ljApproveBtn">Approuver master</button>
+        <button class="lj-btn" id="ljCommentBtn">Envoyer commentaire</button>
+        <button class="lj-btn green" id="ljDownloadBtn">Télécharger index</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="lj-vitrine" class="lj-view">
+    <div class="lj-card p-4">
+      <h3 class="text-2xl font-black mb-3">Vitrine Studio Lujamko</h3>
+      <div id="lujamkoMonitor" class="aspect-video rounded-[26px] border border-cyan-400/20 bg-black/50 flex items-center justify-center text-center p-6 overflow-hidden">
+        <div><div class="text-xs uppercase tracking-[.25em] text-cyan-300">Lujamko x Meyden</div><div class="mt-3 text-3xl font-black">Son • Mix • Master • Service</div><p class="mt-3 text-white/60">Une session devient un actif.</p></div>
+      </div>
+      <button id="lujamkoTunedBtn" class="w-full rounded-2xl bg-cyan-300 py-4 mt-4 text-lg font-black text-black hover:bg-white transition">Tuned On — Studio Lujamko</button>
+      <div class="grid grid-cols-3 gap-3 mt-4 text-sm">
+        <button id="lujamkoPreviewBtn" class="rounded-2xl border border-cyan-400/20 bg-cyan-400/10 p-3 font-black">Démo monitor</button>
+        <button id="lujamkoResetBtn" class="rounded-2xl border border-cyan-400/20 bg-cyan-400/10 p-3 font-black">Reset studio</button>
+        <div class="rounded-2xl border border-cyan-400/20 bg-black/30 p-3"><div class="text-white/45">Tuned</div><div id="lujamkoTunedCount" class="text-xl font-black text-cyan-300">0</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+<section id="auditeur-central" class="glass rounded-[32px] p-5 mb-6">
+  <div class="flex flex-wrap justify-between gap-3 mb-4">
+    <div>
+      <h2 class="text-3xl font-black">Interface Auditeur</h2>
+      <p class="text-white/60 text-sm">Les auditeurs traversent les 5 Meyden Monitors et influencent directement l’évolution des contenus.</p>
+    </div>
+    <div class="rounded-2xl bg-cyan-300 px-4 py-3 text-black font-black">Public Gratuit • Premium 1.99$</div>
+  </div>
+
+  <div class="grid gap-4 md:grid-cols-5">
+    <div class="glass rounded-3xl p-4 text-center"><div class="text-cyan-300 font-black text-2xl">Fans</div><div class="text-white/50 text-sm mt-2">Boucle 120 min</div><div class="mt-4 text-3xl font-black">120m</div></div>
+    <div class="glass rounded-3xl p-4 text-center"><div class="text-orange-300 font-black text-2xl">Public Ciblé</div><div class="text-white/50 text-sm mt-2">Boucle 120 min</div><div class="mt-4 text-3xl font-black">120m</div></div>
+    <div class="glass rounded-3xl p-4 text-center"><div class="text-yellow-300 font-black text-2xl">Petit Public</div><div class="text-white/50 text-sm mt-2">Boucle 120 min</div><div class="mt-4 text-3xl font-black">120m</div></div>
+    <div class="glass rounded-3xl p-4 text-center"><div class="text-orange-200 font-black text-2xl">Grand Public</div><div class="text-white/50 text-sm mt-2">Boucle 120 min</div><div class="mt-4 text-3xl font-black">120m</div></div>
+    <div class="glass rounded-3xl p-4 text-center"><div class="text-green-300 font-black text-2xl">International</div><div class="text-white/50 text-sm mt-2">Boucle 120 min</div><div class="mt-4 text-3xl font-black">120m</div></div>
+  </div>
+
+  <div class="mt-6 rounded-3xl border border-white/10 bg-black/30 p-5">
+    <div class="text-xl font-black mb-3">Analyse comportementale auditeur</div>
+    <div class="grid md:grid-cols-4 gap-4">
+      <div class="glass rounded-2xl p-4"><div class="text-white/50 text-sm">Temps regardé</div><div class="text-3xl font-black text-green-300">62%</div></div>
+      <div class="glass rounded-2xl p-4"><div class="text-white/50 text-sm">Tuned On</div><div class="text-3xl font-black text-orange-300">41%</div></div>
+      <div class="glass rounded-2xl p-4"><div class="text-white/50 text-sm">Moyenne comportementale</div><div class="text-3xl font-black text-yellow-300">52%</div></div>
+      <div class="glass rounded-2xl p-4"><div class="text-white/50 text-sm">Décision système</div><div class="text-xl font-black text-cyan-300">Relance monitor</div></div>
+    </div>
+  </div>
+</section>
+
+
+  <section id="meyden-art-fact" class="glass rounded-[32px] p-5 border border-orange-500/20 orange-glow">
+    <div class="flex flex-wrap justify-between gap-4 items-start mb-5">
+      <div>
+        <div class="inline-flex rounded-full border border-orange-400/30 bg-orange-500/10 px-4 py-2 text-xs font-black uppercase tracking-[.22em] text-orange-300">Meyden Mall intégré</div>
+        <h2 class="mt-4 text-4xl lg:text-5xl font-black">Meyden Art & Fact</h2>
+        <p class="text-white/60 mt-2 max-w-3xl">Mini centre commercial culturel Meyden : forfaits, services à la carte, production vidéo, incubation, événements et configurateur merch testable.</p>
+      </div>
+      <button onclick="mafOpenCheckout()" class="rounded-2xl bg-orange-500 px-5 py-4 font-black text-black">Panier Art & Fact — <span id="mafTopCart">0 article • 0$</span></button>
+    </div>
+    <div class="flex flex-wrap gap-2 mb-5 text-sm font-black" id="mafZoneNav"></div>
+    <div id="mafApp"></div>
+  </section>
+
+</main>
+
+<div id="toast" class="fixed bottom-4 left-1/2 z-[80] hidden -translate-x-1/2 rounded-2xl bg-white text-black px-5 py-3 font-black shadow-2xl"></div>
+<div id="creatorJoinModal" class="modal fixed inset-0 z-[70] items-center justify-center bg-black/80 p-4"><div class="glass rounded-[32px] max-w-2xl w-full p-5 max-h-[92vh] overflow-auto"><div class="flex justify-between gap-4"><div><h2 class="text-2xl font-black">Adhésion créateur Meyden</h2><p class="text-white/55 text-sm mt-1">Formulaire testable.</p></div><button data-close="creatorJoinModal" class="text-2xl">×</button></div><form id="creatorJoinForm" class="grid gap-3 mt-4"><input required name="artistName" class="rounded-2xl bg-black/40 border border-white/10 px-4 py-3" placeholder="Nom d’artiste / projet"><input required type="email" name="email" class="rounded-2xl bg-black/40 border border-white/10 px-4 py-3" placeholder="Courriel"><select required name="creatorPlan" class="rounded-2xl bg-black/40 border border-white/10 px-4 py-3"><option value="">Choisir un forfait créateur</option><option>Créateur Gratuit — 0$/mois</option><option>Créateur 14.99$ — 4 contenus / mois</option><option>Créateur 65.99$ — 1 contenu / jour</option></select><textarea required name="description" class="rounded-2xl bg-black/40 border border-white/10 px-4 py-3" placeholder="Décris ton projet"></textarea><label class="flex gap-3 text-sm text-white/70"><input required type="checkbox" class="mt-1"> J’accepte l’analyse du contenu.</label><button class="rounded-2xl bg-orange-500 py-4 font-black text-black">Créer mon adhésion créateur</button></form><div id="creatorJoinResult" class="hidden mt-4 rounded-2xl border border-orange-400/30 bg-orange-500/10 p-4 text-sm"></div></div></div>
+<div id="publicJoinModal" class="modal fixed inset-0 z-[70] items-center justify-center bg-black/80 p-4"><div class="glass rounded-[32px] max-w-2xl w-full p-5 max-h-[92vh] overflow-auto"><div class="flex justify-between gap-4"><div><h2 class="text-2xl font-black">Adhésion public auditeur</h2><p class="text-white/55 text-sm mt-1">Formulaire testable.</p></div><button data-close="publicJoinModal" class="text-2xl">×</button></div><form id="publicJoinForm" class="grid gap-3 mt-4"><input required name="fullName" class="rounded-2xl bg-black/40 border border-white/10 px-4 py-3" placeholder="Nom complet"><input required type="email" name="email" class="rounded-2xl bg-black/40 border border-white/10 px-4 py-3" placeholder="Courriel"><select required name="publicPlan" class="rounded-2xl bg-black/40 border border-white/10 px-4 py-3"><option value="">Choisir un forfait public</option><option>Public Gratuit — 0$/mois</option><option>Public 1.99$ — accès complet</option></select><select name="interest" class="rounded-2xl bg-black/40 border border-white/10 px-4 py-3"><option>Metal / Rock</option><option>Électro / Cinématique</option><option>Art visuel</option><option>Événements live</option><option>Découverte générale</option></select><button class="rounded-2xl bg-cyan-300 py-4 font-black text-black">Créer mon accès public</button></form><div id="publicJoinResult" class="hidden mt-4 rounded-2xl border border-cyan-400/30 bg-cyan-500/10 p-4 text-sm"></div></div></div>
+<div id="sponsorModal" class="modal fixed inset-0 z-[70] items-center justify-center bg-black/80 p-4"><div class="glass rounded-[32px] max-w-xl w-full p-5"><div class="flex justify-between"><h2 class="text-2xl font-black">Demande sponsor</h2><button data-close="sponsorModal" class="text-2xl">×</button></div><form class="localForm grid gap-3 mt-4" data-success="Demande sponsor envoyée localement."><input required class="rounded-2xl bg-black/40 border border-white/10 px-4 py-3" placeholder="Nom / marque"><input required class="rounded-2xl bg-black/40 border border-white/10 px-4 py-3" placeholder="Courriel"><textarea required class="rounded-2xl bg-black/40 border border-white/10 px-4 py-3" placeholder="Objectif de commandite"></textarea><button class="rounded-2xl bg-orange-500 py-3 font-black text-black">Envoyer</button></form></div></div>
+<div id="sceneBookModal" class="modal fixed inset-0 z-[70] items-center justify-center bg-black/80 p-4"><div class="glass rounded-[32px] max-w-xl w-full p-5"><div class="flex justify-between"><h2 class="text-2xl font-black">Réserver / rendez-vous</h2><button data-close="sceneBookModal" class="text-2xl">×</button></div><form class="localForm grid gap-3 mt-4" data-success="Demande de rendez-vous envoyée localement."><input required class="rounded-2xl bg-black/40 border border-white/10 px-4 py-3" placeholder="Nom / salle / organisme"><input required class="rounded-2xl bg-black/40 border border-white/10 px-4 py-3" placeholder="Courriel"><input class="rounded-2xl bg-black/40 border border-white/10 px-4 py-3" placeholder="Date souhaitée"><textarea required class="rounded-2xl bg-black/40 border border-white/10 px-4 py-3" placeholder="Description"></textarea><button class="rounded-2xl bg-orange-500 py-3 font-black text-black">Envoyer</button></form></div></div>
+<div id="sceneAttendModal" class="modal fixed inset-0 z-[70] items-center justify-center bg-black/80 p-4"><div class="glass rounded-[32px] max-w-xl w-full p-5"><div class="flex justify-between"><h2 class="text-2xl font-black">Assister à un show</h2><button data-close="sceneAttendModal" class="text-2xl">×</button></div><form class="localForm grid gap-3 mt-4" data-success="Inscription public enregistrée localement."><input required class="rounded-2xl bg-black/40 border border-white/10 px-4 py-3" placeholder="Nom"><input required class="rounded-2xl bg-black/40 border border-white/10 px-4 py-3" placeholder="Courriel"><button class="rounded-2xl bg-orange-500 py-3 font-black text-black">M’inscrire</button></form></div></div>
+<div id="coinsModal" class="modal fixed inset-0 z-[70] items-center justify-center bg-black/80 p-4"><div class="glass rounded-[32px] max-w-xl w-full p-5"><div class="flex justify-between"><h2 class="text-2xl font-black">Guichet MYD</h2><button data-close="coinsModal" class="text-2xl">×</button></div><form class="localForm grid gap-3 mt-4" data-success="Demande de guichet envoyée localement."><input required class="rounded-2xl bg-black/40 border border-white/10 px-4 py-3" placeholder="Nom du créateur"><input required type="number" min="1" class="rounded-2xl bg-black/40 border border-white/10 px-4 py-3" placeholder="Nombre de MYD"><textarea required class="rounded-2xl bg-black/40 border border-white/10 px-4 py-3" placeholder="Justification"></textarea><button class="rounded-2xl bg-orange-500 py-3 font-black text-black">Déposer la demande</button></form></div></div>
+
+<script>
+const $=id=>document.getElementById(id);
+const safeScroll=id=>{const el=$(id);if(el)el.scrollIntoView({behavior:'smooth',block:'start'});else toast('Section introuvable : '+id)};
+
+function stopAllPlayback(exceptId=''){
+  document.querySelectorAll('video').forEach(v=>{
+    if(v.id!==exceptId){try{v.pause()}catch(e){}}
+  });
+  document.querySelectorAll('iframe[data-player="meyden"]').forEach(frame=>{
+    if(frame.id!==exceptId){
+      const src=frame.src;
+      frame.src='about:blank';
+      setTimeout(()=>{frame.src=src},10);
+    }
+  });
+  Object.keys(monitorRuntime||{}).forEach(name=>{
+    const id='video_'+safeMonitorId(name);
+    if(id!==exceptId) monitorRuntime[name].playing=false;
+  });
+}
+
+const monitors=[
+  {name:'Fans',audience:'Communauté engagée',reward:0,rewardText:'Validation communauté',color:'cyan'},
+  {name:'Public Ciblé',audience:'Public précis',reward:0,rewardText:'Optimisation audience',color:'green'},
+  {name:'Petit Public',audience:'Audience restreinte',reward:.5,rewardText:'0.5 coin / 24h',color:'purple'},
+  {name:'Grand Public',audience:'Grand public',reward:1.5,rewardText:'1.5 coin / 24h',color:'orange'},
+  {name:'International',audience:'Audience large',reward:3,rewardText:'3 coins / 24h',color:'yellow'}
+];
+
+const state={
+  files:[],currentIndex:0,currentVideo:null,tuned:1200,lujamkoTuned:0,coins:148,score:78,version:1,
+  monitor:'Fans',audience:'Communauté engagée',creator:{free:260,weekly:110,daily:40},public:{free:4800,premium:400},
+  algo:{levelIndex:0,hoursInLevel:0,cycleCount:0,retention:0,tunedPercent:0,average:0,decision:'En attente'}
+};
+
+const makeItem=(title,duration,url='',type='demo')=>({
+  id:Math.random().toString(36).slice(2),title,duration,url,type,cycles:0,hours:0,retention:0,tuned:0,average:0,status:'En test'
+});
+
+const monitorLibraries={
+  'Fans':[makeItem('Vidéo A — démo Fans',12),makeItem('Vidéo B — démo Fans',16)],
+  'Public Ciblé':[makeItem('Vidéo C — démo Ciblé',14)],
+  'Petit Public':[makeItem('Vidéo D — démo Petit Public',9)],
+  'Grand Public':[makeItem('Vidéo E — démo Grand Public',22)],
+  'International':[makeItem('Vidéo F — démo International',17)]
+};
+
+const monitorRuntime={
+  'Fans':{index:0,playing:false},
+  'Public Ciblé':{index:0,playing:false},
+  'Petit Public':{index:0,playing:false},
+  'Grand Public':{index:0,playing:false},
+  'International':{index:0,playing:false}
+};
+
+const engine={cycles:0,promotions:0,rejects:0,log:[]};
+const realArtists=[
+  {name:'Matante Mutante',style:'Metal alternatif / chaos visuel',content:'Playlist officielle Matante Mutante',audience:'Grand Public',coins:245,performance:91,video:'https://www.youtube.com/embed/videoseries?list=PLCRmQFBLFiIYhxFOaZnZotiGbiW3RP65p&autoplay=0&rel=0'},
+  {name:'Symbioz 2.0',style:'Fusion cinématographique',content:'Vidéo officielle Symbioz 2.0',audience:'Public Ciblé',coins:410,performance:96,video:'https://www.youtube.com/embed/Jz4-9NkkMvU?autoplay=0&rel=0'},
+  {name:'Sommdays',style:'Rock alternatif atmosphérique',content:'Playlist officielle Sommdays',audience:'Petit Public',coins:188,performance:84,video:'https://www.youtube.com/embed/videoseries?list=PLuy1YVJSRPWiGOD3RayZ1zSeunO88Sx9N&autoplay=0&rel=0'}
+];
+const flowSteps=[
+  {name:'Upload',text:'Le contenu entre dans le système Meyden.',effect:'entry'},
+  {name:'Analyse',text:'Le système observe le hook, la clarté et la rétention.',effect:'score'},
+  {name:'Circulation',text:'Le contenu tourne dans les monitors.',effect:'monitor'},
+  {name:'Performance',text:'Les signaux publics sont mesurés.',effect:'performance'},
+  {name:'Meyden Coins',text:'Les coins sont accumulés selon le monitor.',effect:'coins'},
+  {name:'Recommandation',text:'Une recommandation est générée.',effect:'email'},
+  {name:'Nouvelle version',text:'Le créateur soumet une version améliorée.',effect:'version'},
+  {name:'Relance',text:'La version repart dans la boucle.',effect:'restart'}
+];
+let flowIndex=0,flowAuto=true,flowTimer=null,growthChart=null;
+
+function toast(t){const el=$('toast');if(!el)return;el.textContent=t;el.classList.remove('hidden');setTimeout(()=>el.classList.add('hidden'),2200)}
+function money(v){return Math.round(v).toLocaleString('fr-CA')+'$'}
+function setErr(t){const e=$('errorBox');if(e){e.textContent=t||'';e.classList.toggle('hidden',!t)}}
+function mediaStatus(t){const el=$('mediaStatus');if(el)el.textContent=t}
+function setText(id,val){const el=$(id);if(el)el.textContent=val}
+function colorClass(color,type){const map={cyan:{text:'text-cyan-300',bar:'bg-cyan-300',border:'border-cyan-300/30'},green:{text:'text-green-300',bar:'bg-green-300',border:'border-green-300/30'},purple:{text:'text-purple-300',bar:'bg-purple-300',border:'border-purple-300/30'},orange:{text:'text-orange-300',bar:'bg-orange-500',border:'border-orange-500/30'},yellow:{text:'text-yellow-300',bar:'bg-yellow-300',border:'border-yellow-300/30'}};return (map[color]||map.orange)[type]}
+function safeMonitorId(name){return name.replace(/[^a-zA-Z0-9]/g,'_')}
+function monitorLibraryTotal(name){return (monitorLibraries[name]||[]).reduce((sum,item)=>sum+Number(item.duration||0),0)}
+function currentMonitorItem(name){const list=monitorLibraries[name]||[];if(!list.length)return null;const rt=monitorRuntime[name]||{index:0,playing:false};if(rt.index>=list.length)rt.index=0;monitorRuntime[name]=rt;return list[rt.index]}
+
+function sync(){
+  ['topCoins','dashboardCoins','linkCoins'].forEach(id=>setText(id,Math.round(state.coins)));
+  setText('topTuned',state.tuned);setText('topScore',state.score);setText('dashboardPerformance',state.score);setText('linkPerformance',state.score);
+  setText('coinValue',(state.coins*.15).toFixed(2)+'$');setText('dashboardVersion',state.version);setText('linkImprovement','Version '+state.version);
+  setText('activeMonitorName',state.monitor);setText('activeMonitorAudience',state.audience);setText('dashboardAudience',state.monitor);setText('linkAudience',state.monitor);setText('monitorMainLabel',state.monitor);
+  setText('algoLevel',monitors[state.algo.levelIndex].name);setText('algoRetention',state.algo.retention+'%');setText('algoTuned',state.algo.tunedPercent+'%');setText('algoAverage',state.algo.average+'%');setText('algoDecision',state.algo.decision);
+}
+
+function youtubeEmbedUrl(url=''){const t=url.trim();const list=t.match(/[?&]list=([a-zA-Z0-9_-]+)/)?.[1]||'';const shorts=t.match(/youtube\.com\/shorts\/([a-zA-Z0-9_-]+)/)?.[1]||'';const watch=t.match(/[?&]v=([a-zA-Z0-9_-]+)/)?.[1]||'';const short=t.match(/youtu\.be\/([a-zA-Z0-9_-]+)/)?.[1]||'';const id=shorts||watch||short;if(list)return`https://www.youtube.com/embed/videoseries?list=${list}&autoplay=1&loop=1&rel=0`;if(id)return`https://www.youtube.com/embed/${id}?autoplay=1&loop=1&playlist=${id}&rel=0`;return''}
+function getYt(){try{return JSON.parse(localStorage.getItem('meydenYoutubeHistory')||'[]')}catch{return[]}}
+function saveYt(h){localStorage.setItem('meydenYoutubeHistory',JSON.stringify(h.slice(0,30)))}
+function clearMonitor(){const m=$('monitor');if(m)m.innerHTML='';state.currentVideo=null}
+function launchYoutube(url){const use=url||$('youtubeInput')?.value||'';const embed=youtubeEmbedUrl(use);if(!embed){setErr('Lien YouTube invalide.');return}clearMonitor();setErr('');const h=getYt().filter(x=>x.url!==use);h.unshift({url:use,date:new Date().toLocaleString('fr-CA')});saveYt(h);renderLibraries();stopAllPlayback('mainYoutubePlayer');$('monitor').innerHTML=`<iframe id="mainYoutubePlayer" data-player="meyden" src="${embed}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>`;mediaStatus('Diffusion YouTube activée.');setText('monitorMainLabel','YouTube actif');toast('YouTube activé')}
+function fileType(f){const n=f.name.toLowerCase();return f.type||(n.endsWith('.gif')?'image/gif':n.endsWith('.png')?'image/png':n.endsWith('.jpg')||n.endsWith('.jpeg')?'image/jpeg':n.endsWith('.mp4')?'video/mp4':n.endsWith('.mov')?'video/quicktime':'application/octet-stream')}
+
+function renderLibraries(){const up=$('uploadLibrary'),yt=$('youtubeLibrary');if(!up||!yt)return;up.innerHTML='';yt.innerHTML='';if(!state.files.length)up.innerHTML='<div class="glass rounded-2xl p-3 text-white/55">Aucun média téléversé.</div>';state.files.forEach((f,i)=>{const b=document.createElement('button');b.className='glass rounded-2xl p-3 text-left';b.innerHTML=`<b>${i+1}. ${f.name}</b><div class="text-xs text-white/45">${f.type}</div>`;b.onclick=()=>renderLocal(i);up.appendChild(b)});const h=getYt();if(!h.length)yt.innerHTML='<div class="glass rounded-2xl p-3 text-white/55">Aucun lien YouTube visionné.</div>';h.forEach((item,i)=>{const b=document.createElement('button');b.className='glass rounded-2xl p-3 text-left';b.innerHTML=`<b>${i+1}. YouTube</b><div class="text-xs text-white/45 break-all">${item.url}</div><div class="text-xs text-white/35">${item.date}</div>`;b.onclick=()=>launchYoutube(item.url);yt.appendChild(b)})}
+
+async function handleFiles(){
+  const input=$('fileInput');const selected=Array.from(input?.files||[]).slice(0,5);
+  if(!selected.length){setErr('Aucun fichier sélectionné.');return}
+  const destination='Fans';
+  setErr('');
+  for(const f of selected){
+    const type=fileType(f);let url='';
+    if(type.startsWith('image/'))url=await new Promise((res,rej)=>{const r=new FileReader();r.onload=e=>res(e.target.result);r.onerror=rej;r.readAsDataURL(f)});
+    else if(type.startsWith('video/'))url=URL.createObjectURL(f);
+    const media={name:f.name,type,size:f.size,url};
+    state.files.push(media);
+    const guessed=Math.max(1,Math.min(10,Math.round((f.size||1000000)/1000000)));
+    if(monitorLibraryTotal(destination)+guessed<=120){monitorLibraries[destination].push(makeItem(f.name,guessed,url,type));}
+  }
+  state.currentIndex=Math.max(0,state.files.length-selected.length);
+  renderLocal(state.currentIndex);renderLibraries();renderMonitorLibraries();renderFiveCentralMonitors();
+  if(input)input.value='';toast('Média ajouté à '+destination);
+}
+
+function renderLocal(i){if(!state.files.length){setErr('Bibliothèque vide.');return}state.currentIndex=(i+state.files.length)%state.files.length;const f=state.files[state.currentIndex];clearMonitor();if(f.type.startsWith('image/')){$('monitor').innerHTML=`<img src="${f.url}" alt="${f.name}">`;mediaStatus('Image/GIF diffusé : '+f.name)}else if(f.type.startsWith('video/')){const wrap=document.createElement('div');wrap.className='relative w-full h-full bg-black';const v=document.createElement('video');v.src=f.url;v.controls=true;v.playsInline=true;v.preload='metadata';v.style.width='100%';v.style.height='100%';v.style.objectFit='contain';v.loop=false;v.onended=nextMedia;v.onerror=()=>setErr('Vidéo locale refusée ou codec non supporté. Essaie MP4 H.264/AAC.');v.id='meydenMainLocalPlayer';v.onplay=()=>stopAllPlayback('meydenMainLocalPlayer');state.currentVideo=v;wrap.appendChild(v);const btn=document.createElement('button');btn.className='absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-3xl bg-orange-500 px-8 py-5 text-black font-black shadow-2xl';btn.textContent='Lire le média';btn.onclick=()=>v.play().then(()=>btn.style.display='none').catch(()=>setErr('Lecture bloquée. Clique sur Play dans le lecteur.'));wrap.appendChild(btn);$('monitor').appendChild(wrap);mediaStatus('Vidéo chargée : '+f.name)}setText('monitorMainLabel','Lecture locale');renderLibraries()}
+function playMedia(){if(state.currentVideo){stopAllPlayback(state.currentVideo.id||'meydenMainLocalPlayer');state.currentVideo.play().catch(()=>setErr('Lecture bloquée. Clique directement sur le lecteur.'))}else toast('Aucune vidéo locale active')}
+function pauseMedia(){if(state.currentVideo){state.currentVideo.pause();toast('Pause')}}
+function reloadMedia(){state.currentVideo?state.currentVideo.load():launchYoutube()}
+function nextMedia(){if(state.files.length){renderLocal((state.currentIndex+1)%state.files.length);setTimeout(()=>{if(state.currentVideo)state.currentVideo.play().catch(()=>{})},80)}}function prevMedia(){renderLocal(state.currentIndex-1)}
+
+function playerMarkup(name,item){if(!item)return '<div class="text-white/35">Aucun contenu actif</div>';if(item.url&&item.type&&item.type.startsWith('video/'))return `<video id="video_${safeMonitorId(name)}" src="${item.url}" controls playsinline preload="metadata"></video>`;if(item.url&&item.type&&item.type.startsWith('image/'))return `<img src="${item.url}" alt="${item.title}">`;return `<div><div class="text-lg font-black text-orange-300">${item.title}</div><div class="mt-2 text-sm text-white/50">Démo monitor — ajoute un MP4 pour lire une vraie vidéo</div></div>`}
+function monitorPlay(name){monitorRuntime[name].playing=true;renderFiveCentralMonitors();setTimeout(()=>{const id='video_'+safeMonitorId(name);const v=$(id);if(v){stopAllPlayback(id);monitorRuntime[name].playing=true;v.play().catch(()=>setErr('Lecture bloquée : clique directement sur le lecteur du monitor.'))}},30);toast(name+' en lecture')}
+function monitorPause(name){monitorRuntime[name].playing=false;const v=$('video_'+safeMonitorId(name));if(v)v.pause();toast(name+' en pause')}
+function monitorNext(name){const list=monitorLibraries[name]||[];if(!list.length)return;monitorRuntime[name].index=(monitorRuntime[name].index+1)%list.length;monitorRuntime[name].playing=true;renderFiveCentralMonitors();setTimeout(()=>{const v=$('video_'+safeMonitorId(name));if(v)v.play().catch(()=>{})},80);toast(name+' : contenu suivant')}
+function monitorTuned(name){state.tuned++;state.coins++;const item=currentMonitorItem(name);if(item){item.tuned=Math.min(100,(item.tuned||0)+8);item.retention=Math.max(item.retention||0,55);item.average=Math.round(((item.retention||0)+(item.tuned||0))/2);item.status=item.average>=70?'Solide':item.average>=50?'À surveiller':'À retravailler'}sync();renderMonitorLibraries();renderFiveCentralMonitors();toast('Tuned On ajouté à '+name)}
+
+function renderFiveCentralMonitors(){
+  const root=$('fiveCentralMonitors');if(!root)return;root.innerHTML='';
+  monitors.forEach((m,index)=>{
+    const items=monitorLibraries[m.name]||[];const item=currentMonitorItem(m.name);const minutes=monitorLibraryTotal(m.name);
+    const avg=items.length?Math.round(items.reduce((sum,it)=>sum+(it.average||0),0)/items.length):0;
+    const retention=items.length?Math.round(items.reduce((sum,it)=>sum+(it.retention||0),0)/items.length):0;
+    const tuned=items.length?Math.round(items.reduce((sum,it)=>sum+(it.tuned||0),0)/items.length):0;
+    const pct=Math.min(100,Math.round(minutes/120*100));const next=monitors[index+1]?.name||'Sommet';
+    const card=document.createElement('div');card.className=`rounded-[30px] overflow-hidden border ${colorClass(m.color,'border')} bg-black/30`;
+    card.innerHTML=`<div class="p-4 border-b border-white/10 bg-gradient-to-r from-orange-500/20 to-cyan-500/10"><div class="text-xs uppercase tracking-[.18em] text-white/45">Meyden Monitor central</div><div class="text-2xl font-black ${colorClass(m.color,'text')} mt-1">${m.name}</div><div class="text-sm text-white/50 mt-1">${m.audience}</div></div><div class="aspect-video bg-black flex items-center justify-center text-center p-2">${playerMarkup(m.name,item)}</div><div class="p-3 border-t border-white/10"><div class="h-2 rounded-full bg-white/10 overflow-hidden"><div class="h-full ${colorClass(m.color,'bar')}" style="width:${pct}%"></div></div><div class="mt-2 flex justify-between text-xs text-white/50"><span>${minutes}/120 min</span><span>${items.length} contenus</span></div></div><div class="p-4 border-t border-white/10 grid grid-cols-2 gap-2 text-xs"><div class="glass rounded-xl p-2">Rétention<br><b class="text-green-300 text-lg">${retention}%</b></div><div class="glass rounded-xl p-2">Tuned On<br><b class="text-orange-300 text-lg">${tuned}%</b></div><div class="glass rounded-xl p-2">Moyenne<br><b class="text-yellow-300 text-lg">${avg}%</b></div><div class="glass rounded-xl p-2">Prochain<br><b class="text-cyan-300 text-sm">${next}</b></div></div><div class="p-3 border-t border-white/10 text-xs text-white/55">Actif : <b class="text-white">${item?item.title:'Aucun'}</b><br>${item?(item.hours||0)+'h/24h • '+(item.average||0)+'% • '+(item.status||'En test'):''}</div><div class="grid grid-cols-3 border-t border-white/10"><button data-monitor-play="${m.name}" class="bg-orange-500 py-3 font-black text-black">Play</button><button data-monitor-pause="${m.name}" class="bg-white/10 py-3 font-black">Pause</button><button data-monitor-next="${m.name}" class="bg-white/10 py-3 font-black">Suivant</button></div><button data-monitor-tuned="${m.name}" class="w-full border-t border-orange-500/20 bg-orange-500 py-3 font-black text-black hover:bg-orange-400 transition">Tuned On — ${m.name}</button>`;
+    root.appendChild(card);
+    setTimeout(()=>{const id='video_'+safeMonitorId(m.name);const v=$(id);if(v){v.onplay=()=>stopAllPlayback(id);v.loop=false;v.onended=()=>monitorNext(m.name);if(monitorRuntime[m.name]?.playing){stopAllPlayback(id);v.play().catch(()=>{})}}},0)
+  });
+  document.querySelectorAll('[data-monitor-play]').forEach(btn=>btn.onclick=()=>monitorPlay(btn.dataset.monitorPlay));
+  document.querySelectorAll('[data-monitor-pause]').forEach(btn=>btn.onclick=()=>monitorPause(btn.dataset.monitorPause));
+  document.querySelectorAll('[data-monitor-next]').forEach(btn=>btn.onclick=()=>monitorNext(btn.dataset.monitorNext));
+  document.querySelectorAll('[data-monitor-tuned]').forEach(btn=>btn.onclick=()=>monitorTuned(btn.dataset.monitorTuned));
+}
+
+function renderMonitorLibraries(){const grid=$('monitorLibrariesGrid');if(!grid)return;grid.innerHTML='';let total=0,count=0;monitors.forEach(m=>{const items=monitorLibraries[m.name]||[];const minutes=monitorLibraryTotal(m.name);total+=minutes;count+=items.length;const pct=Math.min(100,Math.round(minutes/120*100));const full=minutes>=120;const card=document.createElement('div');card.className=`glass rounded-3xl p-4 border ${colorClass(m.color,'border')}`;card.innerHTML=`<div class="text-xs text-white/45 uppercase">Bibliothèque</div><div class="text-xl font-black ${colorClass(m.color,'text')}">${m.name}</div><div class="mt-4 flex items-center gap-3"><div class="h-2 flex-1 rounded-full bg-white/10 overflow-hidden"><div class="h-full ${colorClass(m.color,'bar')}" style="width:${pct}%"></div></div><div class="text-xs font-black ${full?'text-red-300':'text-white/70'}">${minutes} / 120 min</div></div><div class="mt-4 text-xs text-white/45 uppercase">Contenus</div><div class="mt-2 space-y-2 max-h-48 overflow-auto">${items.length?items.map(it=>`<div class="text-sm rounded-xl bg-black/20 p-2"><div class="flex justify-between gap-2"><span>▶ ${it.title}</span><b>${it.duration} min</b></div><div class="text-xs text-white/45 mt-1">${it.hours||0}h / 24h • Moyenne ${it.average||0}% • ${it.status||'En test'}</div></div>`).join(''):'<div class="text-white/40 text-sm">Aucun contenu.</div>'}</div><div class="mt-4 pt-3 border-t border-white/10 flex justify-between"><b>Total</b><b class="${colorClass(m.color,'text')}">${minutes}:00</b></div>`;grid.appendChild(card)});setText('totalLibraryCapacity',`${total} / 600 min`);setText('activeContentCount',count);setText('symbiosisStatus',total>0?'EN SYMBIOSE':'EN ATTENTE')}
+async function addToMonitorLibrary(){
+  const name='Fans';
+  const titleInput=$('monitorUploadTitle');
+  const durationInput=$('monitorUploadDuration');
+  const fileInput=$('creatorVideoFile');
+  const title=(titleInput?.value||'Nouveau contenu Meyden').trim();
+  const duration=Math.max(1,Math.min(120,Number(durationInput?.value||1)));
+
+  if(monitorLibraryTotal(name)+duration>120){
+    toast('Capacité dépassée : maximum 120 minutes dans Fans');
+    return;
+  }
+
+  if(fileInput&&fileInput.files&&fileInput.files.length){
+    const file=fileInput.files[0];
+    const type=fileType(file);
+    let url='';
+
+    if(type.startsWith('image/')){
+      url=await new Promise((res,rej)=>{const r=new FileReader();r.onload=e=>res(e.target.result);r.onerror=rej;r.readAsDataURL(file)});
+    }else if(type.startsWith('video/')){
+      url=URL.createObjectURL(file);
+    }
+
+    const finalTitle=titleInput?.value?.trim()||file.name;
+    const media={name:file.name,type,size:file.size,url};
+    state.files.push(media);
+    monitorLibraries[name].push(makeItem(finalTitle,duration,url,type));
+    state.currentIndex=state.files.length-1;
+    renderLocal(state.currentIndex);
+  }else{
+    monitorLibraries[name].push(makeItem(title,duration,'','demo'));
+  }
+
+  state.monitor='Fans';
+  state.audience='Communauté engagée';
+  sync();
+  renderLibraries();
+  renderMonitorLibraries();
+  renderFiveCentralMonitors();
+  if(titleInput)titleInput.value='';
+  if(fileInput)fileInput.value='';
+  toast('Contenu ajouté dans Fans — entrée obligatoire');
+  safeScroll('fiveCentralMonitors');
+}
+
+function renderMonitors(){const g=$('monitorGrid');if(!g)return;g.innerHTML='';monitors.forEach(m=>{const b=document.createElement('button');b.className='glass rounded-3xl p-4 text-left hover:bg-white/10';b.innerHTML=`<div class="text-white/45 text-sm">${m.audience}</div><div class="text-2xl font-black text-orange-300">${m.name}</div><div class="text-xs text-white/50 mt-2">${m.rewardText}</div>`;b.onclick=()=>{state.monitor=m.name;state.audience=m.audience;state.coins+=m.reward;sync();toast('Monitor : '+m.name);safeScroll('monitor-libraries')};g.appendChild(b)})}
+function engineLog(message){engine.log.unshift(new Date().toLocaleTimeString('fr-CA',{hour:'2-digit',minute:'2-digit'})+' — '+message);engine.log=engine.log.slice(0,12);const el=$('engineLog');if(el)el.innerHTML=engine.log.join('<br>')}
+function updateEngineStats(){setText('engineCycles',engine.cycles);setText('enginePromotions',engine.promotions);setText('engineRejects',engine.rejects)}
+function scoreItem(item,levelIndex){item.cycles=(item.cycles||0)+1;item.hours=(item.hours||0)+2;const levelBonus=levelIndex*2;item.retention=Math.min(100,Math.max(15,Math.round(45+Math.random()*45+levelBonus)));item.tuned=Math.min(100,Math.max(5,Math.round(25+Math.random()*55+levelBonus)));item.average=Math.round((item.retention+item.tuned)/2);item.status=item.average>=70?'Solide':item.average>=50?'À surveiller':'À retravailler';return item.average}
+function promoteItem(fromIndex,itemIndex){const from=monitors[fromIndex].name;const to=monitors[fromIndex+1]?.name;if(!to)return false;const item=monitorLibraries[from][itemIndex];if(!item)return false;if(monitorLibraryTotal(to)+item.duration>120){item.status='Bloqué — bibliothèque suivante pleine';engineLog(item.title+' ne peut pas monter : '+to+' est plein.');return false}monitorLibraries[from].splice(itemIndex,1);item.hours=0;item.cycles=0;item.status='Promu vers '+to;monitorLibraries[to].push(item);engine.promotions++;engineLog(item.title+' monte de '+from+' vers '+to+'.');return true}
+function rejectItem(levelName,itemIndex){const item=monitorLibraries[levelName][itemIndex];if(!item)return;monitorLibraries[levelName].splice(itemIndex,1);engine.rejects++;engineLog(item.title+' rejeté de '+levelName+' : courriel constructif envoyé au créateur.');const email=$('algoEmail');if(email){email.classList.remove('hidden');email.innerHTML='<b>Courriel constructif envoyé :</b><br>'+item.title+' doit améliorer son hook, sa rétention et son appel au Tuned On avant une nouvelle soumission.'}}
+function runMonitorEngineCycle(){engine.cycles++;Object.keys(monitorRuntime).forEach(name=>{monitorRuntime[name].playing=true});for(let levelIndex=monitors.length-1;levelIndex>=0;levelIndex--){const level=monitors[levelIndex].name;const items=[...(monitorLibraries[level]||[])];for(let i=items.length-1;i>=0;i--){const realIndex=monitorLibraries[level].indexOf(items[i]);if(realIndex<0)continue;const item=monitorLibraries[level][realIndex];const avg=scoreItem(item,levelIndex);if(avg<45 && item.cycles>=2){rejectItem(level,realIndex);continue}if(avg>=70 && item.hours>=24 && levelIndex<monitors.length-1){promoteItem(levelIndex,realIndex)}}}state.tuned+=Math.round(Math.random()*8)+2;state.coins+=Math.round(Math.random()*4)+1;state.score=Math.min(100,state.score+1);sync();renderMonitorLibraries();renderFiveCentralMonitors();updateEngineStats();engineLog('Cycle 2h complété : les 5 monitors ont évolué ensemble.')}
+function run24hEngine(){for(let i=0;i<12;i++)runMonitorEngineCycle();toast('Simulation 24h complétée')}
+function resetCirculation(){monitorLibraries['Fans']=[makeItem('Vidéo A — démo Fans',12),makeItem('Vidéo B — démo Fans',16)];monitorLibraries['Public Ciblé']=[makeItem('Vidéo C — démo Ciblé',14)];monitorLibraries['Petit Public']=[makeItem('Vidéo D — démo Petit Public',9)];monitorLibraries['Grand Public']=[makeItem('Vidéo E — démo Grand Public',22)];monitorLibraries['International']=[makeItem('Vidéo F — démo International',17)];Object.keys(monitorRuntime).forEach(k=>monitorRuntime[k]={index:0,playing:false});engine.cycles=0;engine.promotions=0;engine.rejects=0;engine.log=[];renderMonitorLibraries();renderFiveCentralMonitors();updateEngineStats();engineLog('Système réinitialisé.');toast('Circulation réinitialisée')}
+
+function simulateRealAlgo(){const a=state.algo;a.cycleCount++;a.hoursInLevel+=2;a.retention=Math.min(100,Math.max(12,Math.round(45+Math.random()*45+(state.score-78)/3)));a.tunedPercent=Math.min(100,Math.max(5,Math.round(20+Math.random()*60+(state.tuned-1200)/120)));a.average=Math.round((a.retention+a.tunedPercent)/2);const current=monitors[a.levelIndex];state.monitor=current.name;state.audience=current.audience;const email=$('algoEmail');if(email)email.classList.add('hidden');if(a.average>=70){state.coins+=current.reward+2;state.score=Math.min(100,state.score+2);if(a.hoursInLevel>=24&&a.levelIndex<monitors.length-1){a.levelIndex++;a.hoursInLevel=0;const next=monitors[a.levelIndex];state.monitor=next.name;state.audience=next.audience;a.decision='Monte vers '+next.name;toast('24h validées : monte vers '+next.name)}else{a.decision='Relancé dans la boucle suivante';toast('Score fort : contenu relancé')}}else if(a.average>=50){state.score=Math.max(0,state.score-1);a.decision='Relance test — à surveiller';toast('Score moyen : relance test')}else{state.score=Math.max(0,state.score-5);a.hoursInLevel=0;a.decision='Rejet constructif';if(email){email.classList.remove('hidden');email.innerHTML='<b>Courriel constructif envoyé :</b><br>Renforcer les 3 premières secondes, clarifier le hook, réduire la durée et soumettre une nouvelle version.'}toast('Score faible : courriel constructif envoyé')}sync()}
+function renderArtists(){const grid=$('artistsGrid');if(!grid)return;grid.innerHTML='';realArtists.forEach((artist,index)=>{const card=document.createElement('div');card.className='glass rounded-[30px] overflow-hidden';card.innerHTML=`<div class="aspect-video bg-black"><iframe src="${artist.video}" allowfullscreen></iframe></div><div class="p-5"><div class="text-2xl font-black text-orange-300">${artist.name}</div><div class="text-sm text-white/50 mt-1">${artist.style}</div><div class="mt-4 grid grid-cols-2 gap-3 text-sm"><div class="glass rounded-2xl p-3"><div class="text-white/40">Projet</div><div class="font-black">${artist.content}</div></div><div class="glass rounded-2xl p-3"><div class="text-white/40">Audience</div><div class="font-black text-cyan-300">${artist.audience}</div></div><div class="glass rounded-2xl p-3"><div class="text-white/40">Coins</div><div class="font-black text-yellow-300">${artist.coins}</div></div><div class="glass rounded-2xl p-3"><div class="text-white/40">Performance</div><div class="font-black text-green-300">${artist.performance}</div></div></div><div class="grid grid-cols-2 gap-3 mt-5"><button onclick="contactArtist('${artist.name}')" class="rounded-2xl bg-cyan-300 py-3 font-black text-black">Contact</button><button onclick="bookArtist('${artist.name}')" class="rounded-2xl bg-orange-500 py-3 font-black text-black">Rendez-vous</button><button onclick="watchArtist(${index})" class="rounded-2xl bg-white/10 py-3 font-black">Lecture vidéo</button><button onclick="payArtist('${artist.name}')" class="rounded-2xl bg-[#0f52ba] py-3 font-black">Paiement</button></div></div>`;grid.appendChild(card)})}
+function contactArtist(name){toast('Contact préparé pour '+name);openModal('sceneBookModal')}function bookArtist(name){openModal('sceneBookModal');toast('Rendez-vous avec '+name)}function payArtist(name){toast('Paiement démo préparé pour '+name)}function watchArtist(index){const artist=realArtists[index];stopAllPlayback('artistPlayer');$('monitor').innerHTML=`<iframe id="artistPlayer" data-player="meyden" src="${artist.video}" allowfullscreen></iframe>`;mediaStatus('Lecture : '+artist.name);state.monitor=artist.audience;state.audience=artist.audience;state.score=artist.performance;state.coins+=artist.coins;sync();toast('Lecture vidéo : '+artist.name);safeScroll('media')}
+function renderFlow(){const g=$('flowGrid');if(!g)return;g.innerHTML='';flowSteps.forEach((s,i)=>{const b=document.createElement('button');b.className=`rounded-2xl p-3 border text-left transition ${i===flowIndex?'bg-orange-500 text-black border-orange-500':'bg-white/5 border-white/10 hover:bg-white/10'}`;b.innerHTML=`<div class="text-xs opacity-70">Étape ${i+1}</div><div class="font-black">${s.name}</div>`;b.onclick=()=>{flowIndex=i;updateFlow(true);restartFlowLoop();mafRender()};g.appendChild(b)})}
+function applyFlow(step){if(step.effect==='score')state.score=Math.min(100,state.score+1);if(step.effect==='monitor'){const m=monitors[flowIndex%monitors.length];state.monitor=m.name;state.audience=m.audience}if(step.effect==='performance'){state.tuned+=3;state.score=Math.min(100,state.score+2)}if(step.effect==='coins')state.coins+=3;if(step.effect==='version')state.version++;sync()}
+function updateFlow(manual=false){const s=flowSteps[flowIndex];renderFlow();const pct=Math.round(((flowIndex+1)/flowSteps.length)*100);setText('flowPercent',pct+'%');const p=$('flowProgress');if(p)p.style.width=pct+'%';setText('flowText',s.text);const e=$('emailBox');if(e)e.classList.toggle('hidden',s.effect!=='email');applyFlow(s);if(manual)toast('Cycle : '+s.name)}
+function autoFlow(){flowIndex=(flowIndex+1)%flowSteps.length;updateFlow(false)}function startFlowLoop(){stopFlowLoop();flowAuto=true;setText('flowPlayBtn','Cycle automatique ON');flowTimer=setInterval(autoFlow,2600)}function stopFlowLoop(){if(flowTimer)clearInterval(flowTimer);flowTimer=null}function toggleFlowLoop(){flowAuto=!flowAuto;if(flowAuto)startFlowLoop();else{stopFlowLoop();setText('flowPlayBtn','Cycle automatique OFF')}}function restartFlowLoop(){if(flowAuto)startFlowLoop();mafRender()}function resetFlow(){flowIndex=0;updateFlow(true);restartFlowLoop();mafRender()}
+function tunedOn(){state.tuned++;state.coins++;state.score=Math.min(100,state.score+1);sync();toast('Tuned On ajouté')}
+function lujamkoTunedOn(){state.lujamkoTuned++;state.tuned++;state.coins++;setText('lujamkoTunedCount',state.lujamkoTuned);sync();toast('Tuned On Studio')}function lujamkoPreview(){const el=$('lujamkoMonitor');if(el)el.innerHTML='<div><div class="text-xs uppercase tracking-[.25em] text-cyan-300">Démo Studio Active</div><div class="mt-3 text-3xl font-black">Session Lujamko en diffusion</div><p class="mt-3 text-white/60">Le studio produit le contenu. Meyden le valorise.</p></div>';toast('Démo monitor Lujamko activée')}function lujamkoReset(){state.lujamkoTuned=0;setText('lujamkoTunedCount','0');toast('Studio réinitialisé')}
+function submitVersion(){state.version++;state.score=Math.min(100,state.score+5);sync();toast('Nouvelle version soumise')}
+function renderPlans(){const creators=[['Créateur Gratuit','0$/mois','Accès limité'],['Créateur 14.99$','14.99$/mois','4 contenus / mois'],['Créateur 65.99$','65.99$/mois','1 contenu / jour']];const publics=[['Public Gratuit','0$/mois','Accès partiel'],['Public 1.99$','1.99$/mois','Accès complet']];const cg=$('creatorPlansGrid'),pg=$('publicPlansGrid');if(cg){cg.innerHTML='';creators.forEach(p=>{const b=document.createElement('button');b.className='glass rounded-2xl p-4 text-left';b.innerHTML=`<b>${p[0]}</b><div class="text-orange-300 font-black">${p[1]}</div><div class="text-white/55 text-sm">${p[2]}</div>`;b.onclick=()=>{setText('dashboardCreatorPlan',p[0]);toast('Paiement préparé : '+p[0])};cg.appendChild(b)})}if(pg){pg.innerHTML='';publics.forEach(p=>{const b=document.createElement('button');b.className='glass rounded-2xl p-4 text-left';b.innerHTML=`<b>${p[0]}</b><div class="text-cyan-300 font-black">${p[1]}</div><div class="text-white/55 text-sm">${p[2]}</div>`;b.onclick=()=>{setText('dashboardPublicPlan',p[0]);toast('Paiement public préparé : '+p[0])};pg.appendChild(b)})}}
+function scenarioData(k){const mult=k==='conservative'?1:k==='realistic'?2.1:4;return Array.from({length:24},(_,i)=>Math.round((i+1)*850*mult+Math.pow(i,1.7)*120*mult))}function updateScenario(k){if(!$('growthChart'))return;const data=scenarioData(k),labels=data.map((_,i)=>'M'+(i+1)),profit=data.map(v=>Math.round(v*.47));if(growthChart)growthChart.destroy();growthChart=new Chart($('growthChart'),{type:'line',data:{labels,datasets:[{label:'Revenus',data,borderWidth:3},{label:'Profit net',data:profit,borderWidth:3}]},options:{responsive:true,plugins:{legend:{labels:{color:'#fff'}}},scales:{x:{ticks:{color:'#aaa'}},y:{ticks:{color:'#aaa'}}}}});setText('activeScenarioLabel',k==='conservative'?'Conservateur':k==='realistic'?'Réaliste':'Ambitieux');setText('finalRevenue',money(data[23]));setText('finalProfit',money(profit[23]));setText('finalSubs',Math.round(data[23]/8))}
+function simulateCycle(){state.creator.weekly+=8;state.creator.daily+=3;state.public.premium+=35;const revenue=state.creator.weekly*14.99+state.creator.daily*65.99+state.public.premium*1.99;const net=revenue-revenue/3-(state.coins*.15);setText('simCreatorTotal',state.creator.free+state.creator.weekly+state.creator.daily);setText('simCreatorMix',`Gratuit ${state.creator.free} • 14.99$ ${state.creator.weekly} • 65.99$ ${state.creator.daily}`);setText('simNetProfit',money(net));toast('Cycle simulé')}
+function openModal(id){const el=$(id);if(el)el.classList.add('open');else toast('Modal introuvable : '+id)}function closeModal(id){const el=$(id);if(el)el.classList.remove('open')}
+function setupAdhesionForms(){const creatorForm=$('creatorJoinForm');if(creatorForm)creatorForm.onsubmit=e=>{e.preventDefault();const data=Object.fromEntries(new FormData(creatorForm).entries());setText('dashboardCreatorPlan',data.creatorPlan||'Créateur');const n=$('creatorNameInput'),em=$('creatorEmailInput');if(n)n.value=data.artistName||'';if(em)em.value=data.email||'';setText('dashboardStatus','Adhésion créateur reçue');const r=$('creatorJoinResult');if(r){r.classList.remove('hidden');r.innerHTML='<b>Adhésion créateur créée en mode démo.</b><br>Nom : '+data.artistName+'<br>Forfait : '+data.creatorPlan}toast('Adhésion créateur reçue')};const publicForm=$('publicJoinForm');if(publicForm)publicForm.onsubmit=e=>{e.preventDefault();const data=Object.fromEntries(new FormData(publicForm).entries());setText('dashboardPublicPlan',data.publicPlan||'Public');const r=$('publicJoinResult');if(r){r.classList.remove('hidden');r.innerHTML='<b>Accès public créé en mode démo.</b><br>Nom : '+data.fullName+'<br>Forfait : '+data.publicPlan+'<br>Intérêt : '+data.interest}toast('Adhésion public reçue')}}
+function handleCreatorUpload(){
+  const input=$('creatorUploadInput');
+  const mainInput=$('fileInput');
+  if(!input||!input.files||!input.files.length){toast('Choisis une vidéo créateur.');return}
+  if(mainInput){
+    const dt=new DataTransfer();
+    Array.from(input.files).forEach(file=>dt.items.add(file));
+    mainInput.files=dt.files;
+    const destination=$('uploadMonitorSelect');
+    if(destination)destination.value='Fans';
+    handleFiles();
+    safeScroll('monitor-libraries');
+  }
+}
+function bindClick(id,fn){const el=$(id);if(el)el.onclick=fn;else console.warn('Bouton manquant:',id)}
+function activateAllButtons(){
+  document.querySelectorAll('button').forEach(btn=>{
+    btn.dataset.ready='true';
+  });
+}
+
+function bindAll(){document.querySelectorAll('[data-scroll]').forEach(b=>b.onclick=()=>safeScroll(b.dataset.scroll));document.querySelectorAll('[data-modal]').forEach(b=>b.onclick=()=>openModal(b.dataset.modal));document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>closeModal(b.dataset.close));document.querySelectorAll('.localForm').forEach(f=>f.onsubmit=e=>{e.preventDefault();toast(f.dataset.success);f.reset();f.closest('.modal')?.classList.remove('open')});document.querySelectorAll('.panelBtn').forEach(b=>b.onclick=()=>{$(b.dataset.panel)?.classList.toggle('open');renderLibraries()});document.querySelectorAll('.scenarioBtn').forEach(b=>b.onclick=()=>updateScenario(b.dataset.scenario));bindClick('addFilesBtn',handleFiles);bindClick('launchYoutubeBtn',()=>launchYoutube());bindClick('youtubeFallbackBtn',()=>launchYoutube());bindClick('clearYoutubeHistoryBtn',()=>{saveYt([]);renderLibraries();toast('Historique effacé')});bindClick('playBtn',playMedia);bindClick('pauseBtn',pauseMedia);bindClick('reloadBtn',reloadMedia);bindClick('prevBtn',prevMedia);bindClick('nextBtn',nextMedia);bindClick('tunedBtn',tunedOn);bindClick('monitorTunedBtn',tunedOn);bindClick('lujamkoTunedBtn',lujamkoTunedOn);bindClick('lujamkoPreviewBtn',lujamkoPreview);bindClick('lujamkoResetBtn',lujamkoReset);bindClick('submitVersionBtn',submitVersion);bindClick('flowPlayBtn',toggleFlowLoop);bindClick('flowStepBtn',()=>{autoFlow();restartFlowLoop();mafRender()});bindClick('flowResetBtn',resetFlow);bindClick('growthTickBtn',simulateCycle);bindClick('realAlgoBtn',simulateRealAlgo);bindClick('addToMonitorLibraryBtn',addToMonitorLibrary);bindClick('run2hCycleBtn',runMonitorEngineCycle);bindClick('run24hCycleBtn',run24hEngine);bindClick('resetCirculationBtn',resetCirculation);bindClick('creatorUploadBtn',handleCreatorUpload)}
+function runSelfTests(){const required=['media','monitor','creatorJoinModal','publicJoinModal','creatorJoinForm','publicJoinForm','artistsGrid','dashboard','scene','studio-lujamko','sponsorModal','monitor-libraries','monitorLibrariesGrid','fiveCentralMonitors','addToMonitorLibraryBtn','run2hCycleBtn','run24hCycleBtn','resetCirculationBtn','engineLog'];const missing=required.filter(id=>!$(id));if(missing.length){console.error('MEYDEN TEST FAIL — éléments manquants:',missing);toast('Test interne : éléments manquants');return false}console.log('MEYDEN TEST OK — éléments essentiels présents');return true}
+
+/* =========================
+   MEYDEN ART & FACT — MALL
+   Section ajoutée sans retirer la plateforme principale.
+========================= */
+const mafZones=['Forfaits','À la carte','Production Vidéo','Merch','Incubateur','Événements','Média'];
+let mafSelected='Merch', mafCart=[], mafLogoData=null, mafLogoName='Logo client', mafCategory='T-Shirt', mafColor='Noir', mafQty=25, mafLogoPosition='Avant', mafLogoSize=100, mafPrint='DTG', mafPreview='Avant', mafZoom=1;
+const mafPrices={'T-Shirt':{25:212,50:399,75:548,100:699},Hoodie:{10:550,25:1200,50:2200},Patch:{25:125,50:225,100:400},Autocollant:{25:75,50:125,100:220},Macaron:{25:100,50:175,100:300},Affiche:{10:150,25:300,50:525}};
+const mafProducts=[
+{zone:'Forfaits',name:'Forfait Starter',desc:'Bloc vidéo 4h accessible. 1 caméra, trépied, deux déplacements inclus. Montage non inclus.',price:350,stock:10},
+{zone:'Forfaits',name:'Forfait Content Creator',desc:'Captation 4h + montage prêt pour réseaux sociaux.',price:550,stock:8},
+{zone:'Forfaits',name:'Forfait Live Session',desc:'Session live immersive pour bands et artistes.',price:850,stock:5},
+{zone:'Forfaits',name:'Forfait Meyden Prestige',desc:'Production cinématographique premium avec direction artistique.',price:1500,stock:3},
+{zone:'À la carte',name:'Bloc Captation Vidéo 4H',desc:'Street vidéo de base. 2 déplacements inclus, second rayon 10 km. Fichiers bruts.',price:350,stock:12},
+{zone:'À la carte',name:'Montage vidéo client',desc:'Montage à partir des images fournies par le client.',price:250,stock:15},
+{zone:'À la carte',name:'Montage cinématographique',desc:'Montage avancé avec colorisation et ambiance premium.',price:450,stock:8},
+{zone:'À la carte',name:'Concept viral court',desc:'Idée courte pour reels, TikTok, shorts et attention rapide.',price:75,stock:25},
+{zone:'À la carte',name:'Scénario / script',desc:'Écriture structurée pour capsule, clip, publicité ou contenu promo.',price:100,stock:20},
+{zone:'À la carte',name:'Direction artistique',desc:'Image, univers visuel, branding et cohérence du projet.',price:150,stock:15},
+{zone:'À la carte',name:'Shooting photo',desc:'Séance photo de base pour artiste, entreprise ou événement.',price:150,stock:15},
+{zone:'À la carte',name:'Affiche officielle',desc:'Affiche professionnelle pour show, événement ou campagne.',price:75,stock:30},
+{zone:'À la carte',name:'Pencarte style cinéma',desc:'Visuel noir/orange inspiré affiche de film, version Meyden.',price:80,stock:30},
+{zone:'À la carte',name:'Captation live multicam',desc:'Captation à plusieurs angles pour spectacle ou podcast.',price:550,stock:6},
+{zone:'À la carte',name:'Livestream professionnel',desc:'Diffusion YouTube ou Facebook avec gestion live et replay.',price:650,stock:5},
+{zone:'À la carte',name:'Organisation de spectacle',desc:'Coordination complète ou partielle : salle, promo, technique, branding.',price:500,stock:6},
+{zone:'À la carte',name:'Kiosque merch',desc:'Mise en place d’un espace merchandising pour show ou événement.',price:150,stock:10},
+{zone:'À la carte',name:'Live painting',desc:'Intégration d’un artiste visuel en direct dans un événement Meyden.',price:300,stock:5},
+{zone:'À la carte',name:'Stratégie réseaux sociaux',desc:'Plan visibilité, hooks, contenu et positionnement numérique.',price:300,stock:10},
+{zone:'À la carte',name:'Protection / SOCAN / Droits',desc:'Droits d’auteur, propriété intellectuelle, SOCAN et exploitation.',price:550,stock:10},
+{zone:'À la carte',name:'Diagnostic Meyden',desc:'Analyse initiale du projet et recommandation du bon niveau ou forfait.',price:75,stock:30},
+{zone:'Production Vidéo',name:'Captation Vidéo 4H',desc:'Bloc 4h : caméra, trépied, mouvements de base, fichiers bruts.',price:350,stock:12},
+{zone:'Production Vidéo',name:'Montage Vidéo',desc:'Montage dynamique à partir des images du client.',price:250,stock:15},
+{zone:'Production Vidéo',name:'Livestream Professionnel',desc:'Diffusion multicam YouTube/Facebook.',price:650,stock:5},
+{zone:'Incubateur',name:'Niveau 1 — Structuration',desc:'Analyse, plan d’action, direction artistique de base, SOCAN/droits.',price:100,stock:25},
+{zone:'Incubateur',name:'Niveau 2 — Déploiement',desc:'Branding avancé, visibilité, préparation scène, reels/shorts.',price:250,stock:15},
+{zone:'Incubateur',name:'Niveau 3 — Expansion',desc:'Accompagnement 360, revenus, diffusion et stratégie long terme.',price:250,stock:8},
+{zone:'Événements',name:'Organisation de Spectacle',desc:'Coordination complète ou partielle : salle, promo, technique, branding.',price:500,stock:6},
+{zone:'Événements',name:'Meyden Prestige Event',desc:'Expérience événementielle immersive haut de gamme.',price:2500,stock:2},
+{zone:'Média',name:'Stratégie Réseaux Sociaux',desc:'Plan visibilité, hooks, contenu et positionnement numérique.',price:300,stock:10},
+{zone:'Média',name:'Consultation Stratégique',desc:'Analyse artistique et développement stratégique.',price:75,stock:30}
+].map((p,i)=>({...p,id:'maf-'+i}));
+
+function mafTotal(){return mafCart.reduce((s,i)=>s+i.price*i.qty,0)}
+function mafUpdateTop(){const el=$('mafTopCart');if(el)el.textContent=`${mafCart.length} article(s) • ${mafTotal()}$`}
+function mafRender(){mafUpdateTop();mafRenderNav();const app=$('mafApp');if(!app)return;app.innerHTML=mafSelected==='Merch'?mafRenderMerch():mafRenderList();const input=$('mafLogoInput');if(input)input.onchange=mafUploadLogo}
+function mafRenderNav(){const nav=$('mafZoneNav');if(!nav)return;nav.innerHTML=mafZones.map(z=>`<button onclick="mafShow('${z}')" class="rounded-2xl px-4 py-3 ${z===mafSelected?'bg-orange-500 text-black':'bg-white/10 text-white'}">${z}</button>`).join('')}
+function mafShow(z){mafSelected=z;mafRender()}
+function mafRenderList(){const cards=mafProducts.filter(p=>p.zone===mafSelected).map(p=>`<div class="glass rounded-[28px] p-5 border border-white/10"><div class="h-32 rounded-3xl bg-gradient-to-br from-orange-500 via-black to-[#0f52ba] flex items-center justify-center text-center p-4 font-black text-xl">${p.name}</div><h3 class="text-2xl font-black mt-4">${p.name}</h3><p class="text-white/60 mt-2 min-h-16">${p.desc}</p><div class="text-white/40 text-sm mt-3">Stock disponible : ${p.stock}</div><div class="mt-4 flex justify-between items-center"><div class="text-3xl font-black text-orange-300">${p.price}$</div><button onclick="mafAdd('${p.id}')" class="rounded-2xl bg-orange-500 px-5 py-3 font-black text-black">Ajouter</button></div></div>`).join('');return `<div class="grid gap-5 lg:grid-cols-[1fr_330px]"><div class="grid gap-5 md:grid-cols-2">${cards}</div>${mafCartHtml()}</div>`}
+function mafColorHex(){return mafColor==='Blanc'?'#fff':mafColor==='Rouge'?'#451111':mafColor==='Gris'?'#52525b':'#050505'}
+function mafLogoPos(){return {'Avant':[92,120],'Poitrine gauche':[106,96],'Poitrine droite':[172,96],'Manche gauche':[42,92],'Manche droite':[222,92],'Arrière':[92,120]}[mafLogoPosition]||[92,120]}
+function mafRenderMerch(){const qs=Object.keys(mafPrices[mafCategory]).map(Number);const price=mafPrices[mafCategory][mafQty];const unit=(price/mafQty).toFixed(2);const pos=mafLogoPos();const size=mafLogoSize*1.5;return `<div class="grid gap-5 xl:grid-cols-[210px_1fr_330px]"><aside class="glass rounded-[28px] p-4"><h3 class="text-orange-300 font-black mb-3">CATÉGORIES MERCH</h3>${Object.keys(mafPrices).map(c=>`<button onclick="mafSetCategory('${c}')" class="w-full text-left rounded-2xl mb-2 px-4 py-3 font-black ${c===mafCategory?'bg-orange-500 text-black':'bg-white/10'}">${c}</button>`).join('')}</aside><section class="space-y-5"><div><h3 class="text-3xl font-black">Configurateur merch — ${mafCategory}</h3><p class="text-white/60">Upload logo, couleur, position, taille, quantité et ajout panier.</p></div><div class="grid gap-5 lg:grid-cols-2"><div class="glass rounded-[28px] p-5"><h4 class="font-black mb-3">Aperçu — ${mafPreview}</h4><div class="relative min-h-[500px] rounded-[28px] border border-white/10 bg-gradient-to-br from-black via-[#120900] to-black flex items-center justify-center overflow-hidden"><div class="absolute left-3 top-1/2 -translate-y-1/2 grid gap-2 z-10"><button onclick="mafZoomSet(.1)" class="rounded-xl bg-black/70 border border-white/20 p-3">+</button><button onclick="mafZoomSet(-.1)" class="rounded-xl bg-black/70 border border-white/20 p-3">−</button><button onclick="mafZoomReset()" class="rounded-xl bg-black/70 border border-white/20 p-3">□</button></div><div style="transform:scale(${mafZoom});" class="relative w-[330px] h-[420px] transition"><div style="background:${mafColorHex()}" class="absolute left-[55px] top-[20px] w-[220px] h-[310px] rounded-b-[70px] shadow-2xl maf-shirt-part"></div><div style="background:${mafColorHex()}" class="absolute left-[28px] top-[55px] w-[85px] h-[105px] rounded-[45px] rotate-[-24deg] maf-shirt-part"></div><div style="background:${mafColorHex()}" class="absolute right-[28px] top-[55px] w-[85px] h-[105px] rounded-[45px] rotate-[24deg] maf-shirt-part"></div><div class="absolute left-[125px] top-[22px] w-[80px] h-[45px] rounded-b-full border-b-4 border-white/20 bg-black/20"></div>${mafPreview==='Arrière'?'<div class="absolute left-[105px] top-[170px] text-white/40">Dos du produit</div>':`<div style="left:${pos[0]}px;top:${pos[1]}px;width:${size}px;height:${size}px" class="absolute z-10 flex items-center justify-center">${mafLogoData?`<img src="${mafLogoData}" class="max-w-full max-h-full object-contain drop-shadow-2xl">`:`<div class="border border-orange-500 text-orange-300 rounded-xl p-3 text-center font-black text-sm">${mafLogoName}</div>`}</div>`}</div></div><div class="grid grid-cols-4 gap-2 mt-3">${['Avant','Arrière','Côté gauche','Côté droit'].map(v=>`<button onclick="mafPreview='${v}';mafRender()" class="rounded-2xl px-2 py-3 ${v===mafPreview?'bg-orange-500 text-black':'bg-white/10'}">${v}</button>`).join('')}</div></div><div class="space-y-5"><div class="glass rounded-[28px] p-5"><h4 class="font-black mb-3">Téléverser un logo</h4><div class="flex gap-3 items-center"><div class="w-24 h-24 rounded-2xl border border-white/10 bg-black flex items-center justify-center overflow-hidden">${mafLogoData?`<img src="${mafLogoData}" class="w-full h-full object-contain">`:'Aucun'}</div><div><div class="text-white/50 text-sm">Fichier</div><b>${mafLogoData?mafLogoName:'Aucun fichier'}</b><label class="block text-orange-300 font-black cursor-pointer mt-2">${mafLogoData?'Remplacer':'Sélectionner'}<input id="mafLogoInput" type="file" accept="image/*" class="hidden"></label></div></div></div><div class="glass rounded-[28px] p-5 space-y-4">${mafChips('Position',['Avant','Arrière','Poitrine gauche','Poitrine droite','Manche gauche','Manche droite'],mafLogoPosition,'mafSetPosition')}<div><h4 class="font-black mb-2">Taille du logo : ${mafLogoSize}%</h4><input type="range" min="45" max="135" value="${mafLogoSize}" oninput="mafLogoSize=Number(this.value);mafRender()" class="w-full accent-orange-500"></div>${mafChips('Impression',['DTG','Sérigraphie','Transfert'],mafPrint,'mafSetPrint')}${mafChips('Couleur',['Noir','Blanc','Rouge','Gris'],mafColor,'mafSetColor')}</div></div></div></section><aside class="glass rounded-[28px] p-5 h-fit sticky top-28"><h3 class="font-black text-orange-300 mb-4">Résumé commande</h3><div class="space-y-2 text-sm"><div class="flex justify-between"><span class="text-white/50">Produit</span><b>${mafCategory}</b></div><div class="flex justify-between"><span class="text-white/50">Position</span><b>${mafLogoPosition}</b></div><div class="flex justify-between"><span class="text-white/50">Taille</span><b>${mafLogoSize}%</b></div><div class="flex justify-between"><span class="text-white/50">Couleur</span><b>${mafColor}</b></div><div class="flex justify-between"><span class="text-white/50">Impression</span><b>${mafPrint}</b></div></div><h4 class="font-black mt-5 mb-2">Quantité</h4><div class="grid grid-cols-2 gap-2">${qs.map(q=>`<button onclick="mafQty=${q};mafRender()" class="rounded-2xl p-3 text-left ${q===mafQty?'bg-orange-500 text-black':'bg-white/10'}"><b>${q} unités</b><br>${mafPrices[mafCategory][q]}$<br><small>${(mafPrices[mafCategory][q]/q).toFixed(2)}$/u</small></button>`).join('')}</div><div class="mt-5 border-t border-white/10 pt-5"><div class="flex justify-between items-end"><b>Total</b><div class="text-4xl font-black text-orange-300">${price}$</div></div><div class="text-white/50 text-sm">Unité : ${unit}$</div><button onclick="mafAddCustom()" class="w-full rounded-2xl bg-orange-500 py-4 font-black text-black mt-4">Ajouter au panier</button></div></aside></div><div class="mt-5">${mafCartHtml()}</div>`}
+function mafChips(title,items,active,fn){return `<div><h4 class="font-black mb-2">${title}</h4><div class="flex flex-wrap gap-2">${items.map(x=>`<button onclick="${fn}('${x}')" class="rounded-2xl px-3 py-2 ${x===active?'bg-orange-500 text-black':'bg-white/10'}">${x}</button>`).join('')}</div></div>`}
+function mafCartHtml(){return `<aside class="glass rounded-[28px] p-5"><div class="flex justify-between items-center"><h3 class="text-2xl font-black text-orange-300">Panier</h3><button onclick="mafClear()" class="text-white/45 hover:text-red-300">Vider</button></div>${mafCart.length?mafCart.map(i=>`<div class="rounded-2xl border border-white/10 p-3 mt-3"><b>${i.name}</b><p class="text-white/50 text-sm">${i.desc}</p><div class="flex gap-2 items-center mt-2"><button onclick="mafQtyChange('${i.id}',-1)" class="rounded-xl bg-white/10 w-9 h-9">−</button><span>${i.qty}</span><button onclick="mafQtyChange('${i.id}',1)" class="rounded-xl bg-white/10 w-9 h-9">+</button><button onclick="mafRemove('${i.id}')" class="ml-auto text-red-300">Retirer</button></div><div class="text-orange-300 font-black mt-2">${i.price*i.qty}$</div></div>`).join(''):'<p class="text-white/40 mt-4">Aucun article ajouté.</p>'}<div class="border-t border-white/10 mt-4 pt-4 flex justify-between text-2xl font-black"><span>Total</span><span class="text-orange-300">${mafTotal()}$</span></div><button onclick="mafOpenCheckout()" class="w-full rounded-2xl bg-orange-500 py-4 font-black text-black mt-4">Passer au paiement</button></aside>`}
+function mafSetCategory(c){mafCategory=c;mafQty=Number(Object.keys(mafPrices[c])[0]);mafRender()}
+function mafSetPosition(x){mafLogoPosition=x;mafRender()}
+function mafSetPrint(x){mafPrint=x;mafRender()}
+function mafSetColor(x){mafColor=x;mafRender()}
+function mafZoomSet(d){mafZoom=Math.max(.75,Math.min(1.4,mafZoom+d));mafRender()}
+function mafZoomReset(){mafZoom=1;mafRender()}
+function mafUploadLogo(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{mafLogoData=r.result;mafLogoName=f.name;mafRender()};r.readAsDataURL(f)}
+function mafAdd(id){const p=mafProducts.find(x=>x.id===id);if(p)mafAddItem({...p})}
+function mafAddCustom(){const price=mafPrices[mafCategory][mafQty];mafAddItem({id:'maf-custom-'+Date.now(),zone:'Merch',name:`${mafCategory} personnalisé — ${mafQty} unités`,desc:`${mafColor} • ${mafLogoPosition} • ${mafPrint} • ${(price/mafQty).toFixed(2)}$/u`,price,stock:999})}
+function mafAddItem(item){const found=mafCart.find(x=>x.id===item.id);if(found){if(found.qty>=found.stock)return alert('Stock maximum atteint');found.qty++}else mafCart.push({...item,qty:1});mafRender()}
+function mafQtyChange(id,d){const i=mafCart.find(x=>x.id===id);if(!i)return;i.qty+=d;if(i.qty<=0)mafRemove(id);else mafRender()}
+function mafRemove(id){mafCart=mafCart.filter(x=>x.id!==id);mafRender()}
+function mafClear(){if(mafCart.length&&confirm('Vider le panier Art & Fact?')){mafCart=[];mafRender()}}
+function mafOpenCheckout(){const lines=mafCart.length?mafCart.map(i=>`${i.qty}x ${i.name} — ${i.price*i.qty}$`).join('\n'):'Panier vide';alert(`Commande Meyden Art & Fact\n\n${lines}\n\nTotal : ${mafTotal()}$ CAD\n\nPaiement suggéré : Interac à matthieuprudhomme1984@gmail.com`)}
+
+
+/* ===== MEYDEN OS CORE FUSION — MOTEUR MYD CENTRAL ===== */
+const MYDCore={
+  log:[],
+  lastTotal:null,
+  ensure(){
+    if(!state.myd){
+      state.myd={purchased:Number(state.coins||0),bonus:0,locked:0,subscriptionActive:true,plan:'Créateur 14.99$',transactions:[]};
+      this.lastTotal=Number(state.coins||0);
+      this.addLog('Wallet MYD initialisé depuis les coins existants.');
+    }
+  },
+  total(){this.ensure();return Math.round((state.myd.purchased||0)+(state.myd.bonus||0));},
+  syncLegacyDelta(){
+    this.ensure();
+    const current=Number(state.coins||0);
+    const known=Number(state.myd.purchased||0)+Number(state.myd.bonus||0);
+    const delta=Math.round(current-known);
+    if(delta>0){state.myd.bonus+=delta;this.addLog('Récompense héritée convertie en MYD bonus : +'+delta);}
+    if(delta<0){let loss=Math.abs(delta);const b=Math.min(state.myd.bonus,loss);state.myd.bonus-=b;loss-=b;state.myd.purchased=Math.max(0,state.myd.purchased-loss);}
+    state.coins=this.total();
+  },
+  addLog(txt){
+    const time=new Date().toLocaleTimeString('fr-CA',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+    this.log.unshift('['+time+'] '+txt);
+    this.log=this.log.slice(0,80);
+  },
+  buy(amount){
+    this.ensure();amount=Math.max(0,Number(amount)||0);if(!amount)return toast('Montant invalide');
+    state.myd.purchased+=amount;state.coins=this.total();this.addLog('Achat : '+amount+' MYD pour '+amount+'$ CAD.');sync();toast(amount+' MYD achetés');
+  },
+  reward(amount,reason='Récompense plateforme'){
+    this.ensure();amount=Math.max(0,Number(amount)||0);if(!amount)return;
+    state.myd.bonus+=amount;state.coins=this.total();this.addLog('Bonus : +'+amount+' MYD — '+reason+'.');sync();
+  },
+  spend(amount,label='Transaction Meyden'){
+    this.ensure();amount=Math.max(0,Number(amount)||0);if(!amount)return false;
+    if(this.total()<amount){toast('MYD insuffisants');this.addLog('Refus : solde insuffisant pour '+label+'.');return false;}
+    let left=amount;
+    const bonusUsed=Math.min(state.myd.bonus,left);state.myd.bonus-=bonusUsed;left-=bonusUsed;
+    if(left>0)state.myd.purchased=Math.max(0,state.myd.purchased-left);
+    state.coins=this.total();this.addLog('Dépense : -'+amount+' MYD — '+label+'.');sync();toast('Paiement MYD accepté');return true;
+  },
+  withdraw(amount){
+    this.ensure();amount=Math.max(0,Number(amount)||0);if(!amount)return toast('Montant invalide');
+    if(state.myd.purchased<amount){toast('Retrait refusé : seulement les MYD achetés sont retirable.');this.addLog('Retrait refusé : '+amount+' MYD demandés.');return;}
+    state.myd.purchased-=amount;state.coins=this.total();const cad=(amount/4).toFixed(2);
+    this.addLog('Demande de retrait : '+amount+' MYD = '+cad+'$ CAD au guichet.');sync();toast('Retrait simulé : '+cad+'$ CAD');
+  },
+  render(){
+    this.ensure();this.syncLegacyDelta();
+    const total=this.total();
+    const set=(id,val)=>{const el=document.getElementById(id);if(el)el.textContent=val};
+    set('mydPurchased',Math.round(state.myd.purchased));set('mydBonus',Math.round(state.myd.bonus));
+    set('mydStoreValue',total+'$');set('mydWithdrawValue',(state.myd.purchased/4).toFixed(2)+'$');
+    set('topCoins',total);set('linkCoins',total);set('dashboardCoins',total);set('coinValue',total+'$');
+    const log=document.getElementById('mydActivityLog');
+    if(log){log.innerHTML=(this.log.length?this.log:['[système] En attente d’activité MYD.']).map(x=>'<div class="rounded-2xl bg-black/35 border border-white/10 p-3">'+x+'</div>').join('');}
+  },
+  bind(){
+    const bind=(id,fn)=>{const el=document.getElementById(id);if(el)el.onclick=fn};
+    bind('mydBuyBtn',()=>this.buy(document.getElementById('mydBuyAmount')?.value));
+    bind('mydWithdrawBtn',()=>this.withdraw(document.getElementById('mydWithdrawAmount')?.value));
+    bind('mydTestUploadBtn',()=>{this.reward(8,'upload validé par Meyden Monitor');state.score=Math.min(100,state.score+2);});
+    bind('mydTestTunedBtn',()=>{state.tuned++;this.reward(1,'Tuned On humain vérifié');});
+    bind('mydTestTicketBtn',()=>{if(this.spend(22,'Billetterie Meyden'))this.reward(2,'cashback billet');});
+    bind('mydTestLiveBtn',()=>this.reward(3,'présence livestream vérifiée'));
+    bind('mydAuditBtn',()=>{this.addLog('Audit anti-abus : bonus non retirable, wallet actif, retrait protégé.');this.render();toast('Audit MYD terminé');});
+  }
+};
+const _meydenOriginalSync=sync;
+sync=function(){_meydenOriginalSync();MYDCore.render();};
+const _meydenOriginalTunedOn=tunedOn;
+tunedOn=function(){state.tuned++;state.score=Math.min(100,state.score+1);MYDCore.reward(1,'Tuned On plateforme');};
+const _meydenOriginalLujamkoTunedOn=lujamkoTunedOn;
+lujamkoTunedOn=function(){state.lujamkoTuned++;state.tuned++;setText('lujamkoTunedCount',state.lujamkoTuned);MYDCore.reward(1,'Tuned On Studio Lujamko');};
+function mydInit(){MYDCore.ensure();MYDCore.bind();MYDCore.render();}
+
+function init(){bindAll();activateAllButtons();renderMonitors();renderMonitorLibraries();renderFiveCentralMonitors();renderArtists();setupAdhesionForms();renderFlow();updateFlow(false);renderPlans();renderLibraries();updateScenario('realistic');sync();mydInit();runSelfTests();launchYoutube($('youtubeInput')?.value||'');startFlowLoop();mafRender()}
+init();
+</script>
+
+<!-- =========================================================
+     MEYDEN UNIVERSAL LOGIN BLOCK — ADD-ON INTERNE
+     Ajout non destructif : le code original au-dessus reste intact.
+     ========================================================= -->
+<script>
+(function(){
+  const MEYDEN_LOGIN_USERS = [
+    {
+      name:"Matthieu Prudhomme",
+      email:"matthieuprudhomme1984@gmail.com",
+      pin:"7077",
+      role:"Fondateur / Super Admin",
+      access:100
+    },
+    {
+      name:"Luc Gauthier",
+      email:"productionstudiolujamko@gmail.com",
+      pin:"5055",
+      role:"Administrateur",
+      access:70
+    }
+  ];
+
+  const MEYDEN_LOGIN_STORAGE_KEY = "meydenUniversalLoginSession_v1";
+
+  const css = `
+    body.meyden-access-locked > header,
+    body.meyden-access-locked > main {
+      filter: blur(5px);
+      pointer-events: none;
+      user-select: none;
+    }
+
+    #meydenUniversalLoginOverlay {
+      position: fixed;
+      inset: 0;
+      z-index: 999999;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      background:
+        radial-gradient(circle at 20% 10%, rgba(249,115,22,.28), transparent 34%),
+        radial-gradient(circle at 80% 15%, rgba(0,191,255,.16), transparent 34%),
+        rgba(0,0,0,.88);
+      color: white;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    #meydenUniversalLoginOverlay.open {
+      display: flex;
+    }
+
+    .meyden-login-card {
+      width: min(100%, 520px);
+      border-radius: 32px;
+      border: 1px solid rgba(249,115,22,.42);
+      background: rgba(15,15,18,.94);
+      box-shadow: 0 0 80px rgba(249,115,22,.22);
+      backdrop-filter: blur(18px);
+      padding: 26px;
+    }
+
+    .meyden-login-kicker {
+      display: inline-flex;
+      border-radius: 999px;
+      padding: 8px 14px;
+      background: rgba(249,115,22,.12);
+      border: 1px solid rgba(249,115,22,.28);
+      color: #fdba74;
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .22em;
+    }
+
+    .meyden-login-title {
+      margin: 16px 0 4px;
+      font-size: clamp(34px, 8vw, 56px);
+      line-height: .9;
+      font-weight: 1000;
+      letter-spacing: .08em;
+      color: #fb923c;
+    }
+
+    .meyden-login-subtitle {
+      color: rgba(255,255,255,.55);
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    .meyden-login-field {
+      margin-top: 12px;
+    }
+
+    .meyden-login-field label {
+      display: block;
+      margin-bottom: 6px;
+      color: rgba(255,255,255,.62);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .meyden-login-field input {
+      width: 100%;
+      box-sizing: border-box;
+      border-radius: 18px;
+      border: 1px solid rgba(249,115,22,.38);
+      background: rgba(0,0,0,.52);
+      color: white;
+      outline: none;
+      padding: 14px 16px;
+      font-size: 15px;
+    }
+
+    .meyden-login-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .meyden-login-actions button,
+    #meydenSessionLogout,
+    #meydenSessionOpenLogin {
+      border: 0;
+      cursor: pointer;
+      border-radius: 18px;
+      padding: 14px 16px;
+      font-weight: 1000;
+    }
+
+    #meydenLoginSubmit {
+      background: #f97316;
+      color: #000;
+    }
+
+    #meydenLoginCancel {
+      background: rgba(255,255,255,.10);
+      color: rgba(255,255,255,.78);
+      border: 1px solid rgba(255,255,255,.12);
+    }
+
+    #meydenLoginMessage {
+      min-height: 22px;
+      margin-top: 14px;
+      color: #fdba74;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .meyden-login-note {
+      margin-top: 16px;
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.055);
+      padding: 14px;
+      color: rgba(255,255,255,.55);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    #meydenSessionBadge {
+      position: fixed;
+      right: 14px;
+      bottom: 14px;
+      z-index: 999998;
+      display: none;
+      max-width: min(92vw, 460px);
+      border-radius: 24px;
+      border: 1px solid rgba(249,115,22,.36);
+      background: rgba(0,0,0,.82);
+      backdrop-filter: blur(16px);
+      box-shadow: 0 0 55px rgba(249,115,22,.16);
+      padding: 12px;
+      color: white;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    #meydenSessionBadge.open {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    #meydenSessionInfo {
+      flex: 1;
+      min-width: 180px;
+      font-size: 12px;
+      color: rgba(255,255,255,.62);
+      line-height: 1.45;
+    }
+
+    #meydenSessionInfo b {
+      color: #fb923c;
+      font-size: 13px;
+    }
+
+    #meydenSessionLogout {
+      background: rgba(239,68,68,.18);
+      color: #fecaca;
+      border: 1px solid rgba(248,113,113,.28);
+      padding: 10px 12px;
+      font-size: 12px;
+    }
+
+    #meydenSessionOpenLogin {
+      background: rgba(249,115,22,.96);
+      color: #000;
+      padding: 10px 12px;
+      font-size: 12px;
+    }
+
+    [data-meyden-access-disabled="true"] {
+      opacity: .35 !important;
+      filter: grayscale(1);
+      pointer-events: none !important;
+    }
+  `;
+
+  const html = `
+    <div id="meydenUniversalLoginOverlay" class="open" role="dialog" aria-modal="true">
+      <div class="meyden-login-card">
+        <div class="meyden-login-kicker">Meyden Universal Login Block</div>
+        <div class="meyden-login-title">MEYDEN</div>
+        <div class="meyden-login-subtitle">
+          Clé d’entrée universelle pour connecter ce HTML aux accès internes Meyden.
+        </div>
+
+        <div class="meyden-login-field">
+          <label for="meydenLoginEmail">Courriel</label>
+          <input id="meydenLoginEmail" type="email" autocomplete="username" placeholder="courriel administrateur">
+        </div>
+
+        <div class="meyden-login-field">
+          <label for="meydenLoginPin">NIP</label>
+          <input id="meydenLoginPin" type="password" inputmode="numeric" autocomplete="current-password" placeholder="NIP">
+        </div>
+
+        <div class="meyden-login-actions">
+          <button id="meydenLoginSubmit" type="button">CONNEXION</button>
+          <button id="meydenLoginCancel" type="button">CANCEL</button>
+        </div>
+
+        <div id="meydenLoginMessage">Système verrouillé. Connexion requise.</div>
+
+        <div class="meyden-login-note">
+          Accès prototype local : Matthieu = 100 %, Luc = 70 %. Ce bloc peut être réutilisé dans n’importe quel HTML interne Meyden. Pour une vraie version publique, il faudra brancher ce bloc à un backend sécurisé.
+        </div>
+      </div>
+    </div>
+
+    <div id="meydenSessionBadge">
+      <div id="meydenSessionInfo"></div>
+      <button id="meydenSessionOpenLogin" type="button">Gestion accès</button>
+      <button id="meydenSessionLogout" type="button">LOG OUT</button>
+    </div>
+  `;
+
+  function install(){
+    const style = document.createElement("style");
+    style.id = "meydenUniversalLoginStyle";
+    style.textContent = css;
+    document.head.appendChild(style);
+
+    document.body.insertAdjacentHTML("beforeend", html);
+
+    const overlay = document.getElementById("meydenUniversalLoginOverlay");
+    const badge = document.getElementById("meydenSessionBadge");
+    const info = document.getElementById("meydenSessionInfo");
+    const email = document.getElementById("meydenLoginEmail");
+    const pin = document.getElementById("meydenLoginPin");
+    const msg = document.getElementById("meydenLoginMessage");
+
+    function saveSession(user){
+      const session = {
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        access: user.access,
+        connectedAt: new Date().toISOString()
+      };
+      localStorage.setItem(MEYDEN_LOGIN_STORAGE_KEY, JSON.stringify(session));
+      return session;
+    }
+
+    function readSession(){
+      try {
+        return JSON.parse(localStorage.getItem(MEYDEN_LOGIN_STORAGE_KEY) || "null");
+      } catch(e) {
+        return null;
+      }
+    }
+
+    function clearSession(){
+      localStorage.removeItem(MEYDEN_LOGIN_STORAGE_KEY);
+    }
+
+    function applyAccess(session){
+      if(!session){
+        document.body.classList.add("meyden-access-locked");
+        overlay.classList.add("open");
+        badge.classList.remove("open");
+        msg.textContent = "Système verrouillé. Connexion requise.";
+        return;
+      }
+
+      document.body.classList.remove("meyden-access-locked");
+      overlay.classList.remove("open");
+      badge.classList.add("open");
+
+      info.innerHTML = `<b>${session.name}</b><br>${session.role} — Accès ${session.access}%`;
+
+      document.documentElement.setAttribute("data-meyden-user", session.email);
+      document.documentElement.setAttribute("data-meyden-access", String(session.access));
+
+      // Connexion logique aux zones internes :
+      // 100 % = accès complet.
+      // 70 % = accès opérationnel, mais pas aux zones ultra-critiques futures.
+      const criticalSelectors = [
+        "[data-admin-only='100']",
+        "[data-meyden-admin='100']",
+        ".meyden-super-admin-only"
+      ];
+
+      criticalSelectors.forEach(selector => {
+        document.querySelectorAll(selector).forEach(el => {
+          if(Number(session.access) < 100){
+            el.setAttribute("data-meyden-access-disabled", "true");
+            el.title = "Réservé au Super Admin Meyden 100%";
+          } else {
+            el.removeAttribute("data-meyden-access-disabled");
+            el.removeAttribute("title");
+          }
+        });
+      });
+
+      if(typeof toast === "function"){
+        toast("Connexion Meyden : " + session.name + " — " + session.access + "%");
+      }
+    }
+
+    function login(){
+      const found = MEYDEN_LOGIN_USERS.find(user =>
+        user.email.toLowerCase() === email.value.trim().toLowerCase() &&
+        user.pin === pin.value.trim()
+      );
+
+      if(!found){
+        msg.textContent = "Accès refusé. Courriel ou NIP incorrect.";
+        msg.style.color = "#fecaca";
+        return;
+      }
+
+      msg.style.color = "#fdba74";
+      msg.textContent = "Connexion acceptée.";
+      pin.value = "";
+      applyAccess(saveSession(found));
+    }
+
+    function cancelLogin(){
+      email.value = "";
+      pin.value = "";
+      msg.style.color = "#fdba74";
+      msg.textContent = "Champs réinitialisés.";
+    }
+
+    function logout(){
+      const session = readSession();
+      clearSession();
+      applyAccess(null);
+      if(typeof toast === "function"){
+        toast(session ? "Déconnexion : " + session.name : "Déconnexion complétée");
+      }
+    }
+
+    document.getElementById("meydenLoginSubmit").addEventListener("click", login);
+    document.getElementById("meydenLoginCancel").addEventListener("click", cancelLogin);
+    document.getElementById("meydenSessionLogout").addEventListener("click", logout);
+    document.getElementById("meydenSessionOpenLogin").addEventListener("click", () => {
+      overlay.classList.add("open");
+      document.body.classList.add("meyden-access-locked");
+      msg.textContent = "Gestion des accès Meyden.";
+    });
+
+    [email, pin].forEach(input => {
+      input.addEventListener("keydown", e => {
+        if(e.key === "Enter") login();
+      });
+    });
+
+    window.MeydenUniversalLogin = {
+      users: MEYDEN_LOGIN_USERS.map(({pin, ...safeUser}) => safeUser),
+      getSession: readSession,
+      logout,
+      lock: () => applyAccess(null),
+      unlockAs: (emailAddress) => {
+        const user = MEYDEN_LOGIN_USERS.find(u => u.email.toLowerCase() === String(emailAddress).toLowerCase());
+        if(user) applyAccess(saveSession(user));
+      }
+    };
+
+    applyAccess(readSession());
+  }
+
+  if(document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded", install);
+  } else {
+    install();
+  }
+})();
+</script>
+
+
+<script>
+(function(){
+  const root = document.getElementById('studio-lujamko');
+  if(!root || root.dataset.ljInstalled) return;
+  root.dataset.ljInstalled = "1";
+
+  const qs = (s)=>root.querySelector(s);
+  const qsa = (s)=>Array.from(root.querySelectorAll(s));
+  const saveKey = 'ljStudioIntegratedStateV1';
+  const store = JSON.parse(localStorage.getItem(saveKey)||'null') || {
+    role:'studio',
+    tuned:0,
+    files:[],
+    tasks:[
+      {id:'t1', txt:'Préparer Master V1 pour validation client', status:'À faire'},
+      {id:'t2', txt:'Confirmer session vocale de la semaine', status:'En cours'}
+    ],
+    clients:[
+      {id:'c1', name:'Client Alpha', project:'Single démo', status:'Mix en cours'},
+      {id:'c2', name:'Projet Beta', project:'EP 3 titres', status:'Master à valider'}
+    ],
+    approvals:[
+      {id:'a1', project:'Single démo', version:'Master V1', status:'À valider'}
+    ]
+  };
+  const save=()=>localStorage.setItem(saveKey, JSON.stringify({...store, files:store.files.map(f=>({...f,url:''}))}));
+  const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2);
+  const toast=(t)=>{ if(window.toast) window.toast(t); else alert(t); };
+
+  function roleName(){
+    return store.role==='principal'?'Admin principal 100%':store.role==='studio'?'Luc / Studio 70%':'Client invité';
+  }
+  function canStudio(){return store.role==='principal'||store.role==='studio'}
+
+  function engineHTML(){
+    const bars = Array.from({length:34},(_,i)=>`<span style="height:${18+Math.abs(Math.sin(i*.7))*38}px"></span>`).join('');
+    return `<div class="lj-engine">
+      <div class="lj-screen" id="ljScreen">
+        <video id="ljVideo" playsinline controls></video>
+        <audio id="ljAudio" controls></audio>
+        <div class="lj-bg"><div class="lj-disc"></div></div>
+        <div class="lj-overlay">
+          <h3 id="ljNowTitle">Aucun média chargé</h3>
+          <div class="mini" id="ljNowStatus">Importe un MP3, WAV, MP4 ou MOV.</div>
+          <div class="lj-wave">${bars}</div>
+          <div class="lj-progress"><div class="lj-bar" id="ljBar"></div></div>
+          <div class="flex gap-2 justify-center mt-3">
+            <button class="lj-btn" id="ljBack">−10</button>
+            <button class="lj-btn primary" id="ljPlay">Play</button>
+            <button class="lj-btn" id="ljForward">+10</button>
+            <button class="lj-btn" id="ljLoop">Loop</button>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }
+
+  function item(icon,title,sub,action=''){
+    return `<div class="lj-item"><div class="lj-ico">${icon}</div><div><b>${title}</b><div class="mini">${sub||''}</div></div><div>${action}</div></div>`;
+  }
+
+  function render(){
+    qs('#ljRoleLabel').textContent = roleName();
+    qsa('[data-lj-role]').forEach(b=>b.classList.toggle('active', b.dataset.ljRole===store.role));
+
+    const engineMount = qs('#ljEngineMount');
+    const engineMountFull = qs('#ljEngineMountFull');
+    if(engineMount) engineMount.innerHTML = engineHTML();
+    if(engineMountFull) engineMountFull.innerHTML = engineHTML();
+
+    const ops = store.tasks.map(t=>item('🧠',t.txt,'Service & opérations',`<button class="lj-btn ${t.status==='Terminé'?'green':''}" data-lj-task="${t.id}">${t.status}</button>`)).join('');
+    ['#ljOpsMini','#ljOpsList'].forEach(id=>{const el=qs(id); if(el)el.innerHTML = ops || '<p class="muted">Aucune tâche.</p>';});
+
+    const clients = store.clients.map(c=>item('👤',c.name,`${c.project} · ${c.status}`,`<button class="lj-btn" data-lj-client="${c.id}">Ouvrir</button>`)).join('');
+    ['#ljClientMini','#ljClientsList'].forEach(id=>{const el=qs(id); if(el)el.innerHTML = clients || '<p class="muted">Aucun client.</p>';});
+
+    const portal = store.approvals.map(a=>item('✅',a.project,`${a.version} · ${a.status}`,`<span class="lj-pill">${a.status}</span>`)).join('');
+    const portalEl=qs('#ljPortalList'); if(portalEl) portalEl.innerHTML = portal || '<p class="muted">Aucune validation.</p>';
+
+    const lib=qs('#ljLibrary');
+    if(lib) lib.innerHTML = store.files.map((f,i)=>item(f.kind==='video'?'🎬':'🎧',f.name,`${f.type||'média'} · session`, `<button class="lj-btn" data-lj-play="${i}">Lire</button>`)).join('') || '<p class="muted">Aucun fichier importé dans cette session.</p>';
+
+    bindDynamic();
+  }
+
+  function bindDynamic(){
+    qsa('[data-lj-task]').forEach(btn=>btn.onclick=()=>{
+      const t=store.tasks.find(x=>x.id===btn.dataset.ljTask); if(!t) return;
+      t.status = t.status==='Terminé'?'À faire':'Terminé'; save(); render();
+    });
+    qsa('[data-lj-play]').forEach(btn=>btn.onclick=()=>playFile(Number(btn.dataset.ljPlay)));
+    qsa('[data-lj-client]').forEach(btn=> {
+      btn.onclick=()=> {
+        const c=store.clients.find(x=>x.id===btn.dataset.ljClient);
+        toast(`Dossier client : ${c.name} — ${c.project}`);
+      };
+    });
+    [qs('#ljMediaInput')].filter(Boolean).forEach(inp=>inp.onchange=(e)=>importFile(e.target.files[0]));
+    qsa('#ljPlay').forEach(btn=>btn.onclick=togglePlay);
+    qsa('#ljBack').forEach(btn=>btn.onclick=()=>seek(-10));
+    qsa('#ljForward').forEach(btn=>btn.onclick=()=>seek(10));
+    qsa('#ljLoop').forEach(btn=>btn.onclick=()=>{mediaEls().forEach(m=>m.loop=!m.loop); toast('Loop modifié');});
+  }
+
+  function visibleEngine(){
+    return qsa('.lj-engine').find(e=>e.offsetParent!==null) || qs('.lj-engine');
+  }
+  function mediaEls(){
+    const e=visibleEngine();
+    return e ? [e.querySelector('#ljAudio'), e.querySelector('#ljVideo')].filter(Boolean) : [];
+  }
+  function activeMedia(){
+    const [a,v]=mediaEls();
+    return v && v.style.display==='block' ? v : a;
+  }
+  function playFile(i){
+    const f=store.files[i]; if(!f || !f.url) return toast('Fichier disponible seulement dans cette session. Réimporte-le si la page a été rechargée.');
+    const e=visibleEngine(); if(!e) return;
+    const a=e.querySelector('#ljAudio'), v=e.querySelector('#ljVideo'), screen=e.querySelector('#ljScreen');
+    if(f.kind==='video'){ a.pause(); a.removeAttribute('src'); v.src=f.url; v.style.display='block'; screen.classList.add('video'); v.play(); }
+    else { v.pause(); v.removeAttribute('src'); v.style.display='none'; a.src=f.url; screen.classList.remove('video'); a.play(); }
+    e.querySelector('#ljNowTitle').textContent=f.name;
+    e.querySelector('#ljNowStatus').textContent=f.type||'média local';
+    const media = f.kind==='video'?v:a;
+    media.ontimeupdate=()=>{ const bar=e.querySelector('#ljBar'); if(bar) bar.style.width=((media.currentTime/(media.duration||1))*100)+'%'; };
+  }
+  function togglePlay(){
+    const m=activeMedia(); if(!m || !m.src){ if(store.files[0]) playFile(0); else toast('Importe un média avant de lire.'); return; }
+    if(m.paused) m.play(); else m.pause();
+  }
+  function seek(delta){ const m=activeMedia(); if(m&&m.src) m.currentTime=Math.max(0, Math.min(m.duration||0, m.currentTime+delta)); }
+
+  function importFile(file){
+    if(!file) return;
+    const kind=file.type.startsWith('video')?'video':'audio';
+    const url=URL.createObjectURL(file);
+    store.files.unshift({id:uid(),name:file.name,type:file.type,kind,url});
+    toast('Média importé dans Studio Lujamko');
+    render();
+  }
+
+  qsa('[data-lj-role]').forEach(btn=>btn.onclick=()=>{
+    store.role=btn.dataset.ljRole; save(); render();
+    toast('Accès : '+roleName());
+  });
+  qsa('[data-lj-view]').forEach(btn=>btn.onclick=()=>{
+    const id=btn.dataset.ljView;
+    if(!canStudio() && !['lj-portal','lj-dashboard'].includes(id)){ toast('Accès réservé au studio.'); return; }
+    qsa('[data-lj-view]').forEach(b=>b.classList.remove('primary'));
+    btn.classList.add('primary');
+    qsa('.lj-view').forEach(v=>v.classList.remove('open'));
+    qs('#'+id).classList.add('open');
+    render();
+  });
+
+  function addTask(){
+    if(!canStudio()) return toast('Accès réservé au studio.');
+    const txt=prompt('Nouvelle tâche opération :','Envoyer Master V2 au client');
+    if(txt){store.tasks.unshift({id:uid(),txt,status:'À faire'}); save(); render();}
+  }
+  function addClient(){
+    if(!canStudio()) return toast('Accès réservé au studio.');
+    const name=prompt('Nom du client :','Nouveau client');
+    if(name){store.clients.unshift({id:uid(),name,project:'Projet audio',status:'Actif'}); save(); render();}
+  }
+  ['#ljAddTaskBtn','#ljAddTaskBtn2'].forEach(id=>{const b=qs(id); if(b)b.onclick=addTask;});
+  const addClientBtn=qs('#ljAddClientBtn'); if(addClientBtn)addClientBtn.onclick=addClient;
+  const approve=qs('#ljApproveBtn'); if(approve)approve.onclick=()=>{store.approvals.forEach(a=>a.status='Approuvé');save();render();toast('Master approuvé');};
+  const comment=qs('#ljCommentBtn'); if(comment)comment.onclick=()=>{const c=prompt('Commentaire client :','Correction demandée'); if(c){store.tasks.unshift({id:uid(),txt:'Commentaire client : '+c,status:'À faire'});save();render();toast('Commentaire envoyé');}};
+  const down=qs('#ljDownloadBtn'); if(down)down.onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(store,null,2)],{type:'application/json'}));a.download='lujamko-portail-client.json';a.click();};
+
+  render();
+})();
+</script>
+</body>
+</html>
